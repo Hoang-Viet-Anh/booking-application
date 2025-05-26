@@ -1,0 +1,18 @@
+<div class="group relative min-w-2xs md:max-w-[400px] xl:max-w-[500px] overflow-hidden">
+    <div class="flex transition-transform aspect-video duration-500 ease-in-out"
+        [style.transform]="'translateX(-' + currentIndex * 100 + '%)'">
+        <img *ngFor="let image of images" [src]="image" alt="Slide"
+            class="w-full flex-shrink-0 object-cover rounded-[20px]" />
+    </div>
+
+    <ng-container *ngIf="images.length > 1">
+        <button (click)="prev()" [disabled]="currentIndex === 0"
+            class="absolute left-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow opacity-25 transition-opacity duration-200 group-hover:opacity-100 group-hover:disabled:opacity-50">
+            <lucide-icon [img]="ArrowLeft" class="stroke-primary" />
+        </button>
+        <button (click)="next()" [disabled]="currentIndex === images.length - 1"
+            class="absolute right-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow opacity-25 transition-opacity duration-200 group-hover:opacity-100 group-hover:disabled:opacity-50">
+            <lucide-icon [img]="ArrowRight" class="stroke-primary" />
+        </button>
+    </ng-container>
+</div>

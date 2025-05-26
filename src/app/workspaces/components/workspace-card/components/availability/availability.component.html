@@ -1,0 +1,29 @@
+<ng-container *ngIf="roomsAvailability || desksAvailability">
+    <div class="flex flex-col space-y-3">
+        <h2 class="font-semibold text-lg">Availability</h2>
+        <div class="flex flex-col space-y-3">
+            <ng-container *ngIf="roomsAvailability">
+                <div *ngFor="let option of roomsAvailability" class="flex flex-row space-x-2">
+                    <h3 class="font-semibold">
+                        {{ option.rooms }}
+                        {{ option.rooms === 1 ? 'room' : 'rooms' }}
+                    </h3>
+                    <h3 class="text-gray-500">
+                        for up to
+                        {{ option.capacity }}
+                        {{ option.capacity === 1 ? 'person' : 'people' }}
+                    </h3>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="desksAvailability">
+                <div class="flex flex-row space-x-3 items-center">
+                    <ui-icon iconPath="/icons/armchair.svg" alt="Armchair" />
+                    <p class="font-medium text-lg">
+                        {{ desksAvailability }}
+                        {{ desksAvailability === 1 ? 'desk' : 'desks' }}
+                    </p>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,28 @@
+<ng-container *ngIf="capacityOptions">
+    <div class="flex flex-col space-y-3">
+        <h3 class="font-semibold text-lg">Capacity options</h3>
+        <div class="flex flex-row space-x-4 items-center font-medium text-lg">
+            <ui-icon iconPath="/icons/user.svg" alt="user icon" />
+            <ng-container *ngIf="capacityOptions.length === 1">
+                <h2>
+                    {{ capacityOptions[0] }}
+                    {{ capacityOptions[0] === 1 ? 'person' : 'people' }}
+                </h2>
+            </ng-container>
+            <ng-container *ngIf="capacityOptions.length === 2">
+                <h2>
+                    {{ capacityOptions[0] }}
+                    or
+                    {{ capacityOptions[1] }}
+                    people
+                </h2>
+            </ng-container>
+            <ng-container *ngIf="capacityOptions.length > 2">
+                <h2>
+                    {{ capacityOptions.join(', ') }}
+                    people
+                </h2>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>
