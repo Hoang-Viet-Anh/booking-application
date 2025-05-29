@@ -1,0 +1,14 @@
+<div class="flex flex-col w-full space-y-8">
+    <div class="flex flex-col w-full space-y-2">
+        <h2 class="text-xl font-bold">Start time</h2>
+        <ui-dropdown placeholder="Select start time" [options]="(startTimeStrings$ | async) || []"
+            [disabled]="!(startDate | async) || !(endDate | async)" [selectedOption]="(startTime | async) ?? undefined"
+            (onSelectOption)="updateStartTime($event)" />
+    </div>
+    <div class="flex flex-col w-full space-y-2">
+        <h2 class="text-xl font-bold">End time</h2>
+        <ui-dropdown placeholder="Select end time" [options]="(endTimeStrings$ | async) || []"
+            [disabled]="!(startDate | async) || !(endDate | async) || !(isStartTimeSelected | async)"
+            [selectedOption]="(endTime | async) ?? undefined" (onSelectOption)="updateEndTime($event)" />
+    </div>
+</div>

@@ -7,3 +7,5 @@
     --container-8xl: 96rem;
 }
 
+
+html, body { height: 100%; }

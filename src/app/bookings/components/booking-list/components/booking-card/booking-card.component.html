@@ -1,0 +1,33 @@
+<div class="flex flex-row p-4 rounded-[20px] bg-white space-x-8">
+    <div class="flex max-w-2xs aspect-video">
+        <img [src]="imageUrl" alt="workspace" class="w-full flex-shrink-0 object-cover rounded-[20px]" />
+    </div>
+    <div class="flex flex-col w-full py-3 space-y-6 font-medium text-lg">
+        <div class="flex flex-row w-full items-center justify-between">
+            <h2 class="font-semibold text-3xl">{{ bookingData.workspaceType }} {{ roomSizesToString() }}</h2>
+            <div class="flex flex-row items-center space-x-4">
+                <ui-button variant="outlined">
+                    <div class="flex items-center px-3">
+                        <lucide-icon [img]="SqarePen" class="w-5 h-5 stroke-primary" />
+                    </div>
+                </ui-button>
+                <ui-button variant="ghost" [class]="'border border-red-500'">
+                    <div class="flex items-center px-3">
+                        <lucide-icon [img]="Trash" class="w-5 h-5 stroke-red-500" />
+                    </div>
+                </ui-button>
+            </div>
+        </div>
+
+        <div class="flex flex-col space-y-3">
+            <div class="flex flex-row space-x-4 items-center">
+                <ui-icon iconPath="/icons/calendar.svg" alt="calendar" />
+                <p>{{dateToString()}}</p>
+            </div>
+            <div class="flex flex-row space-x-4 items-center">
+                <ui-icon iconPath="/icons/clock-hour-3.svg" alt="calendar" />
+                <p>{{timeToString()}}</p>
+            </div>
+        </div>
+    </div>
+</div>

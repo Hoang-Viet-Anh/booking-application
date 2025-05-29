@@ -1,6 +1,6 @@
 import { Availability } from "./Availability";
 
-export type Workspace = {
+export interface Workspace {
     id?: string;
     title: string;
     description: string;
@@ -9,4 +9,5 @@ export type Workspace = {
     capacityOptions?: number[];
     roomsAvailability?: Availability[];
     desksAvailability?: number;
+    maxBookingDays?: number;
 }

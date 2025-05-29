@@ -1,0 +1,19 @@
+::ng-deep .mat-calendar {
+    background: #F7F6F9;
+    border: 1px solid #d1d5dc;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+::ng-deep .mat-calendar-body-selected,
+::ng-deep .mat-calendar-body-active {
+    background-color: #4f46e5 !important;
+    color: white !important;
+    border-radius: 20px;
+}
+
+::ng-deep .mat-calendar-body-disabled {
+    opacity: 0.5;
+}
+

@@ -1,4 +1,4 @@
-export type Availability = {
+export interface Availability {
     rooms: number;
     capacity: number;
 }

@@ -1,0 +1,20 @@
+<ng-container *ngIf="bookingList; else noBookings">
+    <div class="flex flex-col space-y-6">
+        <my-booking-card />
+    </div>
+</ng-container>
+
+<ng-template #noBookings>
+    <div class="flex flex-col items-center justify-center rounded-[20px] min-h-96 bg-white p-4 space-y-8 ">
+        <p class="font-semibold text-3xl">🔍</p>
+        <div class="flex flex-col items-center space-y-4">
+            <h2 class="font-semibold text-3xl">You don't have any bookings yet</h2>
+            <p class="text-gray-500">Start by choosing coworking space</p>
+        </div>
+        <ui-button variant="primary" (onClick)="onClickWorkspaces()">
+            <div class="flex items-center px-6">
+                <p>Select a workspace</p>
+            </div>
+        </ui-button>
+    </div>
+</ng-template>

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { IconComponent } from '@shared/components/icon/icon.component';
-import { Availability } from '@shared/types/Availability';
+import { Availability } from '@shared/types/workspace/Availability';
 
 @Component({
   selector: 'workspace-availability',

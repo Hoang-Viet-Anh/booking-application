@@ -12,6 +12,7 @@ export class ButtonComponent {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() disabled = false;
   @Input() variant: 'primary' | 'destructive' | 'outlined' | 'ghost' | 'icon' = 'primary';
+  @Input() class: string = "";
 
   @Output() onClick = new EventEmitter<Event>();
 }
