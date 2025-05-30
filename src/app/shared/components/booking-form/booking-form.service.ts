@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BookingFormData } from "@shared/types/booking/BookingFormData";
-import { DateSlot } from "@shared/types/booking/DateSlot";
+import { BookingFormData, DateSlot } from "@shared/types/booking/BookingFormData";
 import { CustomDateUtil } from "@shared/utils/CustomDateUtil";
 import { BehaviorSubject } from "rxjs";
 
@@ -11,6 +10,10 @@ export class BookingFormService {
     private bookingFormDataSubject = new BehaviorSubject<BookingFormData>({});
 
     bookingFormData$ = this.bookingFormDataSubject.asObservable();
+
+    setBookingForm(data: BookingFormData) {
+        this.bookingFormDataSubject.next(data);
+    }
 
     updateForm(data: Partial<BookingFormData>) {
         const current = this.bookingFormDataSubject.getValue();

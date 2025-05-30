@@ -1,11 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BookingsService } from '@bookings/bookings.service';
+import { BookingFormComponent } from '@shared/components/booking-form/booking-form.component';
+import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 
 @Component({
   selector: 'app-edit-booking',
-  imports: [],
+  imports: [BookingFormComponent],
   templateUrl: './edit-booking.component.html',
   styleUrl: './edit-booking.component.css'
 })
-export class EditBookingComponent {
+export class EditBookingComponent implements OnInit {
+  backRoute = "/bookings";
 
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private bookingFormService: BookingFormService,
+    private bookingsService: BookingsService,
+  ) { }
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate([this.backRoute]);
+    }
+    const booking = this.bookingsService.getBookingById(id!);
+    if (!booking) {
+      this.router.navigate([this.backRoute]);
+    }
+    this.bookingFormService.setBookingForm(booking!);
+  }
+
+  onClickBack(event: Event) {
+    event.preventDefault();
+    this.router.navigate([this.backRoute]);
+  }
 }

@@ -1,6 +1,8 @@
 <ng-container *ngIf="bookingList; else noBookings">
     <div class="flex flex-col space-y-6">
-        <my-booking-card />
+        <ng-container *ngFor="let booking of (myBookings$ | async)">
+            <my-booking-card [bookingData]="booking" />
+        </ng-container>
     </div>
 </ng-container>
 

@@ -13,4 +13,10 @@ export class WorkspaceService {
     update(workspaces: Workspace[]) {
         this.workspacesSubject.next(workspaces);
     }
+
+    getWorkspaceImage(workspaceType: string | undefined): string | undefined {
+        if (!workspaceType) return undefined;
+        const workspace = this.workspacesSubject.value.find(workspace => workspace.title === workspaceType);
+        return workspace?.imageUrls?.[0];
+    }
 }

@@ -1,7 +1,7 @@
 <div class="relative flex flex-col w-screen max-w-8xl p-5 md:p-10 lg:p-20 space-y-5 md:space-y-10">
-    <ui-button variant="ghost" class="absolute left-15 top-3 w-fit" (onClick)="onClickBack.emit($event)">
+    <ui-button variant="ghost" class="absolute left-10 top-3 w-24 h-10" (onClick)="onClickBack.emit($event)">
         <lucide-icon [img]="ChevronLeft" class="w-5 h-5 stroke-primary" />
-        <p class="-translate-y-0.5 pr-1 text-nowrap">Go back</p>
+        <p class="-translate-y-0.5 pr-2 text-nowrap">Go back</p>
     </ui-button>
     <h1 class="text-2xl md:text-4xl font-bold h-12">{{ title }}</h1>
 

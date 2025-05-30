@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { DatePickerComponent } from '@shared/components/date-picker/date-picker.component';
-import { DateSlot } from '@shared/types/booking/DateSlot';
+import { DateSlot } from '@shared/types/booking/BookingFormData';
 import { Workspace } from '@shared/types/workspace/Workspace';
 import { WorkspaceService } from '@workspaces/workspaces.service';
 import { combineLatest, map, Observable } from 'rxjs';
@@ -51,10 +51,9 @@ export class DateRangeComponent {
   isEnabled(): Observable<boolean> {
     const roomSizeSelected = this.roomSize$.pipe(map(roomSizes => roomSizes?.length > 0));
     const workspaceTypeSelected = this.workspace$.pipe(map(workspace => !!workspace));
-    const isOpenSpace = this.workspace$.pipe(map(workspace => workspace?.title === "Open space"));
 
-    return combineLatest([roomSizeSelected, workspaceTypeSelected, isOpenSpace]).pipe(map(([roomSizeSelected, workspaceTypeSelected, isOpenSpace]) => {
-      return (roomSizeSelected && workspaceTypeSelected) || isOpenSpace;
+    return combineLatest([roomSizeSelected, workspaceTypeSelected]).pipe(map(([roomSizeSelected, workspaceTypeSelected]) => {
+      return (roomSizeSelected && workspaceTypeSelected);
     }));
   }
 

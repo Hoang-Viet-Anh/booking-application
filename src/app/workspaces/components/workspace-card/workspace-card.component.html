@@ -1,19 +1,18 @@
 <div class="flex flex-col space-y-6">
     <ng-container *ngFor="let workspace of (availableWorkspaces$ | async)">
         <div class="flex flex-col md:flex-row rounded-[20px] p-4 bg-white w-full md:space-x-6">
-            <workspace-carousel />
+            <workspace-carousel [images]="workspace.imageUrls ?? []" />
             <div class="flex flex-col space-y-8 w-full py-3">
                 <workspace-card-title [title]="workspace.title" [description]="workspace.description" />
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <ng-container *ngIf="workspace.amenities">
                         <workspace-amenities [amenities]="workspace.amenities" />
                     </ng-container>
-                    <ng-container *ngIf="workspace.capacityOptions">
-                        <workspace-capacity-options [capacityOptions]="workspace.capacityOptions" />
+                    <ng-container *ngIf="workspace.title !== 'Open space'">
+                        <workspace-capacity-options [capacityOptions]="workspace.availability.rooms" />
                     </ng-container>
-                    <ng-container *ngIf="workspace.roomsAvailability || workspace.desksAvailability">
-                        <workspace-availability [roomsAvailability]="workspace.roomsAvailability"
-                            [desksAvailability]="workspace.desksAvailability" />
+                    <ng-container *ngIf="workspace.availability">
+                        <workspace-availability [availability]="workspace.availability" />
                     </ng-container>
                 </div>
             </div>

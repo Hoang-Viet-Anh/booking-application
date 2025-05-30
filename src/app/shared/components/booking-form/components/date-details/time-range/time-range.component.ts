@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { DropdownComponent } from '@shared/components/dropdown/dropdown.component';
-import { DateSlot } from '@shared/types/booking/DateSlot';
+import { DateSlot } from '@shared/types/booking/BookingFormData';
 import { TimePeriod } from '@shared/types/booking/TimePeriod';
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
 import { map, Observable, take } from 'rxjs';

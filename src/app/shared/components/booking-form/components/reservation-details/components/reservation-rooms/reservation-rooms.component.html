@@ -1,10 +1,10 @@
 <div *ngIf="(roomCapacities$ | async)" class="flex flex-col w-full space-y-6 font-medium">
-    <p>What room size do you need?</p>
+    <p>What {{(roomType$ | async)}} size do you need?</p>
     <div class="flex flex-col">
         <ng-container *ngFor="let capacity of roomCapacities$ | async">
             <ui-checkbox [isChecked]="(roomSizes$ | async)?.includes(capacity) ?? false"
                 (onCheckboxChange)="onChangeRoomSizes(capacity, $event)">
-                <p class="select-none">Room for <span class="font-semibold">{{capacity > 1 ? capacity + ' people' : '1 person'}}</span></p>
+                <p class="select-none">{{(roomType$ | async)}} for <span class="font-semibold">{{capacity > 1 ? capacity + ' people' : '1 person'}}</span></p>
             </ui-checkbox>
         </ng-container>
     </div>

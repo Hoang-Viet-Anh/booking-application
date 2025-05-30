@@ -1,12 +1,12 @@
-<ng-container *ngIf="roomsAvailability || desksAvailability">
+<ng-container *ngIf="availability">
     <div class="flex flex-col space-y-3">
         <h2 class="font-semibold text-lg">Availability</h2>
         <div class="flex flex-col space-y-3">
-            <ng-container *ngIf="roomsAvailability">
-                <div *ngFor="let option of roomsAvailability" class="flex flex-row space-x-2">
+            <ng-container *ngIf="availability.type === 'rooms'">
+                <div *ngFor="let option of availability.rooms" class="flex flex-row space-x-2">
                     <h3 class="font-semibold">
-                        {{ option.rooms }}
-                        {{ option.rooms === 1 ? 'room' : 'rooms' }}
+                        {{ option.roomsAmount }}
+                        {{ option.roomsAmount === 1 ? 'room' : 'rooms' }}
                     </h3>
                     <h3 class="text-gray-500">
                         for up to
@@ -15,12 +15,11 @@
                     </h3>
                 </div>
             </ng-container>
-            <ng-container *ngIf="desksAvailability">
+            <ng-container *ngIf="availability.type === 'desks'">
                 <div class="flex flex-row space-x-3 items-center">
                     <ui-icon iconPath="/icons/armchair.svg" alt="Armchair" />
                     <p class="font-medium text-lg">
-                        {{ desksAvailability }}
-                        {{ desksAvailability === 1 ? 'desk' : 'desks' }}
+                        {{ desksAmount === 1 ? `${desksAmount} desk` : `${desksAmount} desks` }}
                     </p>
                 </div>
             </ng-container>

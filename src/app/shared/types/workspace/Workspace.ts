@@ -1,13 +1,19 @@
-import { Availability } from "./Availability";
-
 export interface Workspace {
     id?: string;
     title: string;
     description: string;
     imageUrls?: string[];
-    amenities?: string[];
-    capacityOptions?: number[];
-    roomsAvailability?: Availability[];
-    desksAvailability?: number;
-    maxBookingDays?: number;
+    amenities: string[];
+    availability: Availability;
+    maxBookingDays: number;
+}
+
+export interface Availability {
+    type: string;
+    rooms: Room[];
+}
+
+export interface Room {
+    roomsAmount: number;
+    capacity: number;
 }

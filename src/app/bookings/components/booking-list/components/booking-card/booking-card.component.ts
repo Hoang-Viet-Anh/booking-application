@@ -4,12 +4,16 @@ import { BookingFormService } from '@shared/components/booking-form/booking-form
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { BookingFormData } from '@shared/types/booking/BookingFormData';
 import { LucideAngularModule, SquarePen, Trash } from 'lucide-angular';
-import { IconComponent } from "../../../../../shared/components/icon/icon.component";
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
+import { map, Observable } from 'rxjs';
+import { WorkspaceService } from '@workspaces/workspaces.service';
+import { DialogComponent } from '@shared/components/dialog/dialog.component';
+import { IconComponent } from '@shared/components/icon/icon.component';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ButtonComponent, LucideAngularModule, IconComponent],
+  imports: [CommonModule, ButtonComponent, LucideAngularModule, IconComponent, DialogComponent],
   selector: 'my-booking-card',
   templateUrl: './booking-card.component.html',
   styleUrl: './booking-card.component.css'
@@ -18,25 +22,34 @@ export class BookingCardComponent {
   readonly SqarePen = SquarePen;
   readonly Trash = Trash;
 
-  @Input() imageUrl: string = "https://cdn.pixabay.com/photo/2022/04/14/14/33/sunset-7132574_1280.jpg";
+  workspaceImage$: Observable<string | undefined>;
 
-  bookingData: BookingFormData = {
-    name: "crocondine",
-    email: "crocondine@gmail.com",
-    workspaceType: "Private rooms",
-    dateSlot: {
-      startDate: new Date(),
-      endDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      isStartTimeSelected: true,
-      isEndTimeSelected: true
-    },
-    roomSizes: [2]
+  @Input() bookingData: BookingFormData = {};
+
+  isDialogOpen = false;
+
+  constructor(
+    private bookingFormService: BookingFormService,
+    private workspaceService: WorkspaceService,
+    private router: Router
+  ) {
+    this.workspaceImage$ = this.workspaceService.workspaces$.pipe(
+      map(workspaces => workspaces.find(w => w.title === this.bookingData.workspaceType)?.imageUrls?.[0]));
   }
 
-  constructor(private bookingFormService: BookingFormService) { }
+  onEditBooking() {
+    this.router.navigate(['/bookings/' + this.bookingData.id]);
+  }
+
+  openDialog() {
+    this.isDialogOpen = true;
+  }
+
+  closeDialog() {
+    this.isDialogOpen = false;
+  }
 
   roomSizesToString(): string | undefined {
-    if (this.bookingData.workspaceType === "Open space") return undefined;
     return this.bookingFormService.roomSizesToString(this.bookingData.roomSizes);
   }
 

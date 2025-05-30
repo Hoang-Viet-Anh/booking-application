@@ -23,6 +23,7 @@ import { Observable } from 'rxjs';
 })
 export class WorkspaceCardComponent {
   availableWorkspaces$: Observable<Workspace[] | null>;
+  
 
   constructor(private workspaceService: WorkspaceService) {
     this.availableWorkspaces$ = this.workspaceService.workspaces$;
