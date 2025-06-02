@@ -1,11 +1,11 @@
 <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center transition-all duration-400 opacity-0"
     [ngClass]="{
     'opacity-100 pointer-events-auto': open,
-    'opacity-0 pointer-events-none': !open}" (click)="hideDialog($event)">
+    'opacity-0 pointer-events-none': !open}" (click)="onClickOutside($event)">
     <div class="relative flex flex-col space-y-8 bg-white rounded-[20px] p-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden transition-all duration-400 opacity-50"
         [ngClass]="{
         'opacity-100 translate-y-0 pointer-events-auto': open,
-        'opacity-50 translate-y-2 pointer-events-none': !open}" (click)="hideDialog($event)">
+        'opacity-50 translate-y-2 pointer-events-none': !open}" (click)="onClickInside($event)">
         <ui-button variant="icon" class="absolute w-10 h-10 right-5 top-5" (onClick)="hideDialog($event)">
             <div class="flex items-center">
                 <lucide-icon [img]="X" class="w-6 h-6 stroke-gray-400" />

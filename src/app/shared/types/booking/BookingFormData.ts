@@ -2,7 +2,7 @@ export interface BookingFormData {
     id?: string;
     name?: string;
     email?: string;
-    workspaceType?: string;
+    workspaceId?: string;
     dateSlot?: DateSlot;
     roomSizes?: number[];
 }

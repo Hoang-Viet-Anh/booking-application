@@ -1,15 +1,32 @@
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BookingFormData, DateSlot } from "@shared/types/booking/BookingFormData";
+import { Workspace } from "@shared/types/workspace/Workspace";
 import { CustomDateUtil } from "@shared/utils/CustomDateUtil";
-import { BehaviorSubject } from "rxjs";
+import { WorkspaceService } from "@workspaces/workspaces.service";
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from "rxjs";
+import { AvailableDateService } from "./available-date.service";
 
 @Injectable({
     providedIn: 'root',
 })
 export class BookingFormService {
+    private apiUrl = "http://localhost:5249";
+
     private bookingFormDataSubject = new BehaviorSubject<BookingFormData>({});
 
     bookingFormData$ = this.bookingFormDataSubject.asObservable();
+    workspaces$: Observable<Workspace[]>;
+    bookedDates$: Observable<Date[]>;
+
+    constructor(
+        private workspaceService: WorkspaceService,
+        private httpClient: HttpClient,
+        private availableDateService: AvailableDateService,
+    ) {
+        this.workspaces$ = this.workspaceService.workspaces$;
+        this.bookedDates$ = this.availableDateService.bookedDates$;
+    }
 
     setBookingForm(data: BookingFormData) {
         this.bookingFormDataSubject.next(data);
@@ -32,21 +49,22 @@ export class BookingFormService {
     updateDate(data: Partial<DateSlot>) {
         const current = this.bookingFormDataSubject.getValue();
         const merged = { ...current.dateSlot, ...data };
+        const workspace = this.workspaceService.findWorkspace(current.workspaceId);
 
-        if (current.workspaceType === 'Open space') {
+        if (!workspace) return;
+        if (workspace.maxBookingDays === 1) {
             merged.endDate = merged.startDate;
             merged.isEndTimeSelected = false;
-        }
-
-        if (merged.startDate && merged.endDate) {
+        } else if (merged.startDate && merged.endDate) {
             if (CustomDateUtil.compareDate(merged.startDate, merged.endDate) > 0) {
                 merged.endDate = undefined;
                 merged.isEndTimeSelected = false;
             } else {
                 const msDiff = merged.endDate.getTime() - merged.startDate.getTime();
-                const maxDiff = 30 * 24 * 60 * 60 * 1000;
+                const maxDiff = workspace.maxBookingDays * 24 * 60 * 60 * 1000;
+                const overlappingDate = this.availableDateService.getOverlappingDate(merged.startDate, merged.endDate);
 
-                if (msDiff > maxDiff) {
+                if (msDiff > maxDiff || overlappingDate) {
                     merged.endDate = undefined;
                     merged.isEndTimeSelected = false;
                 }
@@ -56,12 +74,24 @@ export class BookingFormService {
         this.bookingFormDataSubject.next({ ...current, dateSlot: merged });
     }
 
-    updateWorkspaceType(workspaceType: string) {
+    updateTimeSlots(endTime: Date) {
         const current = this.bookingFormDataSubject.getValue();
-        if (current.workspaceType === workspaceType) return;
+        if (!current.workspaceId || !current.roomSizes) return;
+        const dateSlot = {
+            startDate: CustomDateUtil.toUtcDate(current.dateSlot?.startDate),
+            endDate: CustomDateUtil.toUtcDate(endTime),
+            isStartTimeSelected: current.dateSlot?.isStartTimeSelected,
+            isEndTimeSelected: current.dateSlot?.isEndTimeSelected
+        }
+        this.availableDateService.getAvailableTimeSlots(dateSlot, current.workspaceId, current.roomSizes);
+    }
+
+    updateWorkspaceId(workspaceId: string) {
+        const current = this.bookingFormDataSubject.getValue();
+        if (current.workspaceId === workspaceId) return;
         const merged = {
             ...current,
-            workspaceType,
+            workspaceId,
             dateSlot: undefined,
             roomSizes: []
         };
@@ -76,6 +106,9 @@ export class BookingFormService {
             dateSlot: undefined
         };
         this.bookingFormDataSubject.next(merged);
+        if (merged.roomSizes.length > 0 && merged.workspaceId) {
+            this.availableDateService.getBookedDates(merged.workspaceId, merged.roomSizes);
+        }
     }
 
     removeRoomSize(size: number) {
@@ -86,20 +119,64 @@ export class BookingFormService {
             dateSlot: undefined
         };
         this.bookingFormDataSubject.next(merged);
+        if (merged.roomSizes && merged.roomSizes.length > 0 && merged.workspaceId) {
+            this.availableDateService.getBookedDates(merged.workspaceId, merged.roomSizes);
+        }
     }
 
-    roomSizesToString(roomSizes: number[] | undefined): string | undefined {
-        if (!roomSizes || roomSizes.length === 0) return undefined;
+    isFormDataValid(): Observable<boolean | undefined> {
+        return this.bookingFormData$.pipe(map(data => {
+            const { name, email, workspaceId, dateSlot, roomSizes } = data;
 
-        if (roomSizes.length === 1) {
-            const n = roomSizes[0];
-            return `for ${n} ${n === 1 ? 'person' : 'people'}`;
-        }
+            const hasRequiredFields = !!name && !!email && !!workspaceId;
 
-        const allButLast = roomSizes.slice(0, -1).join(', ');
-        const last = roomSizes[roomSizes.length - 1];
-        const lastText = `${last} ${last === 1 ? 'person' : 'people'}`;
+            const hasValidDates = !!dateSlot?.startDate && !!dateSlot?.endDate
+                && dateSlot.isStartTimeSelected && dateSlot.isEndTimeSelected;
 
-        return `for ${allButLast} and ${lastText}`;
+            const hasValidRoomSizes = roomSizes && roomSizes.length > 0;
+
+            return hasRequiredFields && hasValidDates && hasValidRoomSizes;
+        }));
+    }
+
+    createBookingRequest(): Observable<boolean> {
+        const data = this.bookingFormDataSubject.getValue();
+        return this.httpClient.post(`${this.apiUrl}/Bookings`, data)
+            .pipe(
+                map(() => {
+                    return true;
+                }),
+                catchError(() => of(false))
+            )
+    }
+
+    updateBookingRequest(): Observable<boolean> {
+        const data = this.bookingFormDataSubject.getValue();
+        return this.httpClient.patch(`${this.apiUrl}/Bookings/${data.id}`, data)
+            .pipe(
+                map(() => {
+                    return true;
+                }),
+                catchError(() => of(false))
+            )
+    }
+
+    deleteBookingRequest(id: string): Observable<boolean> {
+        return this.httpClient.delete(`${this.apiUrl}/Bookings/${id}`)
+            .pipe(
+                map(() => {
+                    return true;
+                }),
+                catchError(() => of(false))
+            )
+    }
+
+    findWorkspace(): Observable<Workspace | undefined> {
+        return combineLatest([this.bookingFormData$, this.workspaces$]).pipe(
+            map(([data, workspaces]) => {
+                if (!data.workspaceId) return;
+                return workspaces.find((w) => w.id === data.workspaceId);
+            }),
+        );
     }
 }

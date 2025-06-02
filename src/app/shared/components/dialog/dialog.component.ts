@@ -14,10 +14,21 @@ export class DialogComponent {
   readonly X = X;
 
   @Input() open: boolean = false;
+  @Input() disableOnClickOutside: boolean = true;
 
   @Output() onClose = new EventEmitter();
 
   constructor() { }
+
+  onClickOutside(event: Event) {
+    if (this.disableOnClickOutside) {
+      this.onClose.emit();
+    }
+  }
+
+  onClickInside(event: Event) {
+    event.stopPropagation();
+  }
 
   hideDialog(event: Event) {
     event.stopPropagation();

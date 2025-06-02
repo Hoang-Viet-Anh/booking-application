@@ -10,6 +10,8 @@ import { WorkspaceService } from '@workspaces/workspaces.service';
 import { DialogComponent } from '@shared/components/dialog/dialog.component';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { Router } from '@angular/router';
+import { StringFormatUtil } from '@shared/utils/StringFormatUtil';
+import { BookingsService } from '@bookings/bookings.service';
 
 @Component({
   standalone: true,
@@ -29,16 +31,33 @@ export class BookingCardComponent {
   isDialogOpen = false;
 
   constructor(
-    private bookingFormService: BookingFormService,
     private workspaceService: WorkspaceService,
-    private router: Router
+    private router: Router,
+    private bookingFormService: BookingFormService,
+    private bookingsService: BookingsService
   ) {
-    this.workspaceImage$ = this.workspaceService.workspaces$.pipe(
-      map(workspaces => workspaces.find(w => w.title === this.bookingData.workspaceType)?.imageUrls?.[0]));
+    this.workspaceImage$ = this.workspaceService.workspaces$.pipe(map(workspaces => workspaces.find(w => w.id === this.bookingData.workspaceId)?.imageUrls?.[0]));
+  }
+
+  get workspaceTitle(): string | undefined {
+    return this.workspaceService.findWorkspace(this.bookingData.workspaceId)?.title;
   }
 
   onEditBooking() {
     this.router.navigate(['/bookings/' + this.bookingData.id]);
+  }
+
+  onDeleteBooking() {
+    if (!this.bookingData.id) {
+      this.closeDialog();
+      return;
+    }
+    this.bookingFormService.deleteBookingRequest(this.bookingData.id).subscribe(success => {
+      if (success) {
+        this.bookingsService.fetchBookings();
+        this.closeDialog();
+      }
+    });
   }
 
   openDialog() {
@@ -50,7 +69,7 @@ export class BookingCardComponent {
   }
 
   roomSizesToString(): string | undefined {
-    return this.bookingFormService.roomSizesToString(this.bookingData.roomSizes);
+    return StringFormatUtil.roomSizesToString(this.bookingData.roomSizes);
   }
 
   dateToString(): string | undefined {

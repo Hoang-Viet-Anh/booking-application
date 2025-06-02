@@ -59,7 +59,11 @@ function timeFormat(date: Date | undefined): string {
     return timeString;
 }
 
-
+function toUtcDate(date: Date | undefined): Date | undefined {
+    if (!date) return undefined;
+    const newDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    return newDate;
+}
 
 export const CustomDateUtil = {
     compareTime,
@@ -67,5 +71,6 @@ export const CustomDateUtil = {
     isSameDate,
     dateFormat,
     dateTimeFormat,
-    timeFormat
+    timeFormat,
+    toUtcDate
 }

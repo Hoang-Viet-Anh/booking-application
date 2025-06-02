@@ -16,7 +16,6 @@ export class EditBookingComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private bookingFormService: BookingFormService,
     private bookingsService: BookingsService,
   ) { }
 
@@ -25,15 +24,10 @@ export class EditBookingComponent implements OnInit {
     if (!id) {
       this.router.navigate([this.backRoute]);
     }
-    const booking = this.bookingsService.getBookingById(id!);
-    if (!booking) {
-      this.router.navigate([this.backRoute]);
-    }
-    this.bookingFormService.setBookingForm(booking!);
+    this.bookingsService.fetchBookingById(id!);
   }
 
   onClickBack(event: Event) {
-    event.preventDefault();
     this.router.navigate([this.backRoute]);
   }
 }

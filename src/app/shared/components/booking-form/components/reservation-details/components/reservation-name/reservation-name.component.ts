@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { InputComponent } from '@shared/components/input/input.component';
 import { map, Observable } from 'rxjs';
@@ -12,6 +12,7 @@ import { map, Observable } from 'rxjs';
 })
 export class ReservationNameComponent {
   name$: Observable<string>;
+  @Input() disabled = false;
 
   constructor(private bookingFormService: BookingFormService) {
     this.name$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.name ?? ''));

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { AvailableDateService } from '@shared/components/booking-form/available-date.service';
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { DatePickerComponent } from '@shared/components/date-picker/date-picker.component';
 import { DateSlot } from '@shared/types/booking/BookingFormData';
-import { Workspace } from '@shared/types/workspace/Workspace';
-import { WorkspaceService } from '@workspaces/workspaces.service';
-import { combineLatest, map, Observable } from 'rxjs';
+import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
+import { combineLatest, map, Observable, take } from 'rxjs';
 
 @Component({
   selector: 'booking-date-range',
@@ -18,31 +18,31 @@ import { combineLatest, map, Observable } from 'rxjs';
 })
 export class DateRangeComponent {
   dateSlot$: Observable<DateSlot | undefined>;
-  workspace$: Observable<Workspace | undefined>;
+  maxBookingDays$: Observable<number | undefined>;
   roomSize$: Observable<number[]>;
   maxDate$: Observable<Date | undefined>;
+  bookedDates$: Observable<Date[]>;
 
   constructor(
-    private workspaceService: WorkspaceService,
-    private bookingFormService: BookingFormService
+    private bookingFormService: BookingFormService,
+    private availableDateService: AvailableDateService,
   ) {
     this.dateSlot$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot))
     this.roomSize$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.roomSizes ?? []));
+    this.maxBookingDays$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.maxBookingDays));
+    this.bookedDates$ = this.availableDateService.bookedDates$;
 
-    this.workspace$ = combineLatest([this.bookingFormService.bookingFormData$, this.workspaceService.workspaces$]).pipe(
-      map(([data, workspaces]) => {
-        if (!data.workspaceType) return;
-        const workspace = workspaces.find((w) => w.title.toLowerCase() === data.workspaceType?.toLowerCase());
-        return workspace;
-      })
-    );
-
-    this.maxDate$ = combineLatest([this.startDate, this.workspace$]).pipe(
-      map(([startDate, workspace]) => {
+    this.maxDate$ = combineLatest([this.startDate, this.maxBookingDays$, this.bookedDates$]).pipe(
+      map(([startDate, maxBookingDays, bookedDates$]) => {
         if (!startDate) return;
         const max = new Date(startDate);
-        const daysToAdd = (workspace?.maxBookingDays ?? 1) - 1;
+        const daysToAdd = (maxBookingDays ?? 1) - 1;
         max.setDate(max.getDate() + daysToAdd);
+
+        const overlappingDate = bookedDates$.find(date => CustomDateUtil.compareDate(date, startDate) > 0 && CustomDateUtil.compareDate(date, max) < 0);
+        if (overlappingDate) {
+          return overlappingDate;
+        }
         return max;
       })
     );
@@ -50,7 +50,7 @@ export class DateRangeComponent {
 
   isEnabled(): Observable<boolean> {
     const roomSizeSelected = this.roomSize$.pipe(map(roomSizes => roomSizes?.length > 0));
-    const workspaceTypeSelected = this.workspace$.pipe(map(workspace => !!workspace));
+    const workspaceTypeSelected = this.bookingFormService.findWorkspace().pipe(map(workspace => !!workspace));
 
     return combineLatest([roomSizeSelected, workspaceTypeSelected]).pipe(map(([roomSizeSelected, workspaceTypeSelected]) => {
       return (roomSizeSelected && workspaceTypeSelected);
@@ -63,6 +63,7 @@ export class DateRangeComponent {
 
   updateEndDate(endDate: Date) {
     this.bookingFormService.updateDate({ endDate, isEndTimeSelected: false });
+    this.bookingFormService.updateTimeSlots(endDate);
   }
 
   get startDate(): Observable<Date | undefined> {

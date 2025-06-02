@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
 import { BookingFormService } from '../../booking-form.service';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from "../../../button/button.component";
 import { Router } from '@angular/router';
+import { WorkspaceService } from '@workspaces/workspaces.service';
+import { StringFormatUtil } from '@shared/utils/StringFormatUtil';
 
 @Component({
   selector: 'booking-dialog-content',
@@ -17,10 +19,10 @@ import { Router } from '@angular/router';
 })
 export class DialogContentComponent {
   email$: Observable<string | undefined>;
-  workspaceType$: Observable<string | undefined>;
   startDate$: Observable<Date | undefined>;
   endDate$: Observable<Date | undefined>;
   roomSizes$: Observable<number[] | undefined>;
+  availabilityType$: Observable<string | undefined>;
 
   @Input() dialogSuccess: boolean = true;
 
@@ -31,10 +33,10 @@ export class DialogContentComponent {
     private router: Router
   ) {
     this.email$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.email));
-    this.workspaceType$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.workspaceType));
     this.startDate$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot?.startDate));
     this.endDate$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot?.endDate));
     this.roomSizes$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.roomSizes));
+    this.availabilityType$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.type));
   }
 
 
@@ -50,21 +52,10 @@ export class DialogContentComponent {
     this.onDialogClose.emit();
   }
 
-  isOpenSpace(): Observable<boolean | undefined> {
-    return this.workspaceType$.pipe(map(workspaceType => workspaceType === 'Open space'));
-  }
-
   roomSizesToString(): Observable<string | undefined> {
     return this.roomSizes$.pipe(
       map(roomSizes => {
-        const text = this.bookingFormService.roomSizesToString(roomSizes);
-        if (roomSizes) {
-          if (roomSizes.length === 1) {
-            return `room ${text}`;
-          }
-          return `rooms ${text}`;
-        }
-        return undefined;
+        return StringFormatUtil.roomSizesToString(roomSizes);
       })
     );
   }

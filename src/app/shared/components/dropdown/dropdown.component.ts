@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { DropdownOption } from '@shared/types/DropdownOption';
 import { LucideAngularModule, ChevronDown } from 'lucide-angular';
 
 @Component({
@@ -11,8 +12,8 @@ import { LucideAngularModule, ChevronDown } from 'lucide-angular';
 export class DropdownComponent {
   readonly ChevronDown = ChevronDown;
 
-  @Input() options?: string[];
-  @Input() selectedOption?: string;
+  @Input() options?: DropdownOption[] | null;
+  @Input() selectedOption?: DropdownOption | null;
   @Input() placeholder: string = "Select an option";
   @Input() disabled: boolean = false;
   open: boolean = false;
@@ -29,8 +30,8 @@ export class DropdownComponent {
     this.open = !this.open;
   }
 
-  selectOption(option: string) {
-    this.onSelectOption.emit(option);
+  selectOption(id: string) {
+    this.onSelectOption.emit(id);
     this.closeDropdown();
   }
 

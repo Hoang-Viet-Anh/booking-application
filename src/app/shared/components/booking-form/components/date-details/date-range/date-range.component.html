@@ -1,8 +1,9 @@
 <div class="flex flex-col w-full space-y-8">
     <ui-date-picker label="Start date" placeholder="Select start date" [date]="(startDate | async) ?? null"
-        [minDate]="today" [disabled]="!(isEnabled() | async)" (dateChange)="updateStartDate($event)" />
+        [minDate]="today" [disabled]="!(isEnabled() | async)" (dateChange)="updateStartDate($event)"
+        [filterDates]="bookedDates$ | async" />
     <ui-date-picker label="End date" placeholder="Select end date" [date]="(endDate | async) ?? null"
-        [disabled]="!(isEnabled() | async) || !(startDate | async) || (workspace$ | async)?.maxBookingDays === 1"
+        [disabled]="!(isEnabled() | async) || !(startDate | async) || (maxBookingDays$ | async) === 1"
         [minDate]="(startDate | async) ?? null" [maxDate]="(maxDate$ | async) ?? null"
-        (dateChange)="updateEndDate($event)" />
+        (dateChange)="updateEndDate($event)" [filterDates]="bookedDates$ | async" />
 </div>

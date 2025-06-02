@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DateFilterFn, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -32,7 +32,28 @@ export class DatePickerComponent {
   @Input() maxDate: Date | null = null;
   @Input() minDate: Date | null = null;
 
+  @Input() set filterDates(dates: Date[] | null) {
+    this._filterDates = dates;
+    this.dateFilterFn = this.buildDateFilter(dates);
+  }
+
   @Output() dateChange = new EventEmitter<Date>();
+
+  dateFilterFn: DateFilterFn<Date | null> = () => true;
+  private _filterDates: Date[] | null = [];
+
+  private buildDateFilter(dates: Date[] | null): DateFilterFn<Date | null> {
+    return (date: Date | null): boolean => {
+      if (!date) return false;
+      if (!dates) return true;
+
+      return !dates.some(d =>
+        d.getFullYear() === date.getFullYear() &&
+        d.getMonth() === date.getMonth() &&
+        d.getDate() === date.getDate()
+      );
+    };
+  }
 
   dateChangeHandler(newDate: Date | null) {
     if (newDate === null) {
@@ -40,4 +61,6 @@ export class DatePickerComponent {
     }
     this.dateChange.emit(newDate);
   }
+
+
 }

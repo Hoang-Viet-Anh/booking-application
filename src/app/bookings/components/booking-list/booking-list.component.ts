@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -14,9 +14,7 @@ import { BookingFormData } from '@shared/types/booking/BookingFormData';
   styleUrl: './booking-list.component.css'
 })
 export class BookingListComponent {
-  myBookings$: Observable<BookingFormData[] | undefined>;
-
-  @Input() bookingList = true;
+  myBookings$: Observable<BookingFormData[]>;
 
   constructor(
     private router: Router,

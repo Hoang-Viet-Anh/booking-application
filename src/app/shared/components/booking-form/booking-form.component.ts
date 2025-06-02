@@ -8,8 +8,7 @@ import { DialogComponent } from "../dialog/dialog.component";
 import { CommonModule } from '@angular/common';
 import { DialogContentComponent } from './components/dialog-content/dialog-content.component';
 import { BookingFormService } from './booking-form.service';
-import { map, Observable } from 'rxjs';
-import { BookingFormData } from '@shared/types/booking/BookingFormData';
+import { map, Observable, take } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -30,31 +29,43 @@ export class BookingFormComponent {
   readonly ChevronLeft = ChevronLeft;
 
   isValidForm$: Observable<boolean | undefined>;
+  isContainId$: Observable<boolean | undefined>;
 
   @Input() title: string = "Book a workspace";
+  @Input() nameDisabled = false;
+  @Input() emailDisabled = false;
 
   @Output() onClickBack = new EventEmitter<Event>();
 
   constructor(private bookingFormService: BookingFormService) {
-    this.isValidForm$ = this.bookingFormService.bookingFormData$.pipe(
-      map((data: BookingFormData) => {
-        const { name, email, workspaceType, dateSlot, roomSizes } = data;
-
-        const hasRequiredFields = !!name && !!email && !!workspaceType;
-
-        const hasValidDates = !!dateSlot?.startDate && !!dateSlot?.endDate
-          && dateSlot.isStartTimeSelected && dateSlot.isEndTimeSelected;
-
-        const hasValidRoomSizes =
-          workspaceType === "Open space" ? true : (roomSizes && roomSizes.length > 0);
-
-        return hasRequiredFields && hasValidDates && hasValidRoomSizes;
-      })
-    );
+    this.isValidForm$ = this.bookingFormService.isFormDataValid();
+    this.isContainId$ = this.bookingFormService.bookingFormData$.pipe(map(data => !!data.id));
   }
 
   dialogOpen = false;
   dialogSuccess = true;
+
+  onSubmit() {
+    this.isContainId$.pipe(take(1)).subscribe(isContainId => {
+      if (isContainId) {
+        this.bookingFormService.updateBookingRequest().subscribe(success => {
+          if (success) {
+            this.showDialog(true);
+          } else {
+            this.showDialog(false);
+          }
+        });
+      } else {
+        this.bookingFormService.createBookingRequest().subscribe(success => {
+          if (success) {
+            this.showDialog(true);
+          } else {
+            this.showDialog(false);
+          }
+        });
+      }
+    });
+  }
 
   showDialog(isSuccess: boolean) {
     this.dialogSuccess = isSuccess;

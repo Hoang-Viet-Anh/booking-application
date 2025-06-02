@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { AvailableDateService } from '@shared/components/booking-form/available-date.service';
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { DropdownComponent } from '@shared/components/dropdown/dropdown.component';
 import { DateSlot } from '@shared/types/booking/BookingFormData';
 import { TimePeriod } from '@shared/types/booking/TimePeriod';
+import { DropdownOption } from '@shared/types/DropdownOption';
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
-import { map, Observable, take } from 'rxjs';
+import { combineLatest, map, Observable, take } from 'rxjs';
 
 @Component({
   selector: 'booking-time-range',
@@ -15,32 +17,44 @@ import { map, Observable, take } from 'rxjs';
 })
 export class TimeRangeComponent {
   dateSlot$: Observable<DateSlot | undefined>;
-  startTimePeriods$: Observable<TimePeriod[] | undefined>;
-  endTimePeriods$: Observable<TimePeriod[] | undefined>;
-  startTimeStrings$: Observable<string[] | undefined>;
-  endTimeStrings$: Observable<string[] | undefined>;
+  startTimePeriods$: Observable<DropdownOption[] | undefined>;
+  endTimePeriods$: Observable<DropdownOption[] | undefined>;
 
-  constructor(private bookingFormService: BookingFormService) {
+  constructor(
+    private bookingFormService: BookingFormService,
+    private availableDateService: AvailableDateService,
+  ) {
     this.dateSlot$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.dateSlot));
 
-    this.startTimePeriods$ = this.dateSlot$.pipe(map((slot) => {
-      if (!slot || !slot.startDate) return;
-      const timePeriods = this.generateTimePeriods(slot.startDate);
-      return timePeriods;
+    this.startTimePeriods$ = this.availableDateService.startTimeSlots$.pipe(map((slots) => {
+      const timePeriods = slots.map(slot => {
+        return {
+          id: slot.toISOString(),
+          name: this.dateToTimeString(slot)
+        }
+      });
+
+      return timePeriods.slice(0, -1);
     }));
 
-    this.endTimePeriods$ = this.dateSlot$.pipe(map((slot) => {
-      if (!slot || !slot.startDate || !slot.endDate) return;
-      const timePeriods = this.generateTimePeriods(slot.endDate);
+    this.endTimePeriods$ = combineLatest([this.dateSlot$, this.availableDateService.endTimeSlots$]).pipe(map(([dates, slots]) => {
+      const timePeriods = slots.map(slot => {
+        return {
+          id: slot.toISOString(),
+          name: this.dateToTimeString(slot)
+        }
+      });
 
-      if (CustomDateUtil.isSameDate(slot.startDate, slot.endDate)) {
-        return timePeriods?.filter(p => CustomDateUtil.compareTime(p.time, slot.startDate!) > 0);
+      if (dates && dates.startDate && dates.endDate && CustomDateUtil.isSameDate(dates.startDate, dates.endDate)) {
+        return timePeriods?.filter(p => {
+          const time = new Date(p.id);
+          return CustomDateUtil.compareTime(time, dates.startDate!) > 0;
+        });
       }
+
       return timePeriods;
     }));
 
-    this.endTimeStrings$ = this.endTimePeriods$.pipe(map((timePeriods) => timePeriods?.map(timePeriod => timePeriod.value)));
-    this.startTimeStrings$ = this.startTimePeriods$.pipe(map((timePeriods) => timePeriods?.map(timePeriod => timePeriod.value)));
   }
 
   get startDate(): Observable<Date | undefined> {
@@ -51,17 +65,23 @@ export class TimeRangeComponent {
     return this.dateSlot$.pipe(map(slot => slot?.endDate));
   }
 
-  get startTime(): Observable<string | undefined> {
+  get startTime(): Observable<DropdownOption | undefined> {
     return this.dateSlot$.pipe(map(slot => {
       if (!slot || !slot.startDate || !slot.isStartTimeSelected) return;
-      return this.dateToTimeString(slot.startDate);
+      return {
+        id: slot.startDate.toISOString(),
+        name: this.dateToTimeString(slot.startDate)
+      }
     }));
   }
 
-  get endTime(): Observable<string | undefined> {
+  get endTime(): Observable<DropdownOption | undefined> {
     return this.dateSlot$.pipe(map(slot => {
       if (!slot || !slot.endDate || !slot.isEndTimeSelected) return;
-      return this.dateToTimeString(slot.endDate);
+      return {
+        id: slot.endDate.toISOString(),
+        name: this.dateToTimeString(slot.endDate)
+      }
     }));
   }
 
@@ -74,37 +94,13 @@ export class TimeRangeComponent {
   }
 
   updateStartTime(startTime: string) {
-    this.startTimePeriods$.pipe(take(1)).subscribe((periods) => {
-      const found = periods?.find(p => p.value === startTime);
-      if (found) {
-        const time = new Date(found?.time);
-        this.bookingFormService.updateTime({ startDate: time, isStartTimeSelected: true });
-      }
-    });
+    const time = new Date(startTime);
+    this.bookingFormService.updateTime({ startDate: time, isStartTimeSelected: true });
   }
 
   updateEndTime(endTime: string) {
-    this.endTimePeriods$.pipe(take(1)).subscribe((periods) => {
-      const found = periods?.find(p => p.value === endTime);
-      if (found) {
-        const time = new Date(found?.time);
-        this.bookingFormService.updateTime({ endDate: time, isEndTimeSelected: true });
-      }
-    });
-  }
-
-  generateTimePeriods(date: Date): TimePeriod[] {
-    const timePeriods = new Array(13).fill(0).map((_, i) => {
-      const time = new Date(Date.UTC(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        i + 6,
-        0,
-      ));
-      return { time, value: this.dateToTimeString(time) };
-    });
-    return timePeriods;
+    const time = new Date(endTime);
+    this.bookingFormService.updateTime({ endDate: time, isEndTimeSelected: true });
   }
 
   dateToTimeString(date: Date): string {
