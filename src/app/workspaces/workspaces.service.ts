@@ -1,13 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Workspace } from "@shared/types/workspace/Workspace";
-import { BehaviorSubject, finalize } from "rxjs";
+import { environment } from "environments/environment";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class WorkspaceService {
-    private apiUrl = "http://localhost:5249";
+    private apiUrl = environment.apiUrl;
 
     private workspacesSubject = new BehaviorSubject<Workspace[]>([]);
 

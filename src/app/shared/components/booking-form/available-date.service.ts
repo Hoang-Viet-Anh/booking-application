@@ -2,14 +2,14 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { DateSlot } from "@shared/types/booking/BookingFormData";
 import { CustomDateUtil } from "@shared/utils/CustomDateUtil";
+import { environment } from "environments/environment";
 import { BehaviorSubject, map } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class AvailableDateService {
-    private readonly apiUrl = "http://localhost:5249";
-    private readonly END_HOUR_UTC = 18;
+    private readonly apiUrl = environment.apiUrl;
 
     private bookedDates = new BehaviorSubject<Date[]>([]);
     private startTimeSlots = new BehaviorSubject<Date[]>([]);

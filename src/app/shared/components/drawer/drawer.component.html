@@ -1,0 +1,10 @@
+<div class="fixed inset-0 z-50 bg-black/50 flex justify-end transition-all duration-400" [ngClass]="{
+    'bg-black/50 pointer-events-auto': open,
+    'bg-black/0 pointer-events-none': !open}" (click)="onClickOutside()">
+    <div class="right-0 h-full w-3xs bg-white transition-transform duration-400" [ngClass]="{
+        'translate-x-0': open,
+        'translate-x-64': !open
+    }">
+        <ng-content></ng-content>
+    </div>
+</div>

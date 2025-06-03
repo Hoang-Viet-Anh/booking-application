@@ -3,13 +3,14 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { BookingFormService } from "@shared/components/booking-form/booking-form.service";
 import { BookingFormData } from "@shared/types/booking/BookingFormData";
+import { environment } from "environments/environment";
 import { BehaviorSubject, map } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class BookingsService {
-    private apiUrl = "http://localhost:5249";
+    private apiUrl = environment.apiUrl;
 
     private myBookingsSubject = new BehaviorSubject<BookingFormData[]>([]);
 

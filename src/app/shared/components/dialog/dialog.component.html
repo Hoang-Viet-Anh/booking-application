@@ -2,7 +2,7 @@
     [ngClass]="{
     'opacity-100 pointer-events-auto': open,
     'opacity-0 pointer-events-none': !open}" (click)="onClickOutside($event)">
-    <div class="relative flex flex-col space-y-8 bg-white rounded-[20px] p-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden transition-all duration-400 opacity-50"
+    <div class="relative flex flex-col space-y-8 bg-white rounded-[20px] p-10 mx-3 md:mx-0 w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden transition-all duration-400 opacity-50"
         [ngClass]="{
         'opacity-100 translate-y-0 pointer-events-auto': open,
         'opacity-50 translate-y-2 pointer-events-none': !open}" (click)="onClickInside($event)">

@@ -4,7 +4,6 @@ import { AvailableDateService } from '@shared/components/booking-form/available-
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { DropdownComponent } from '@shared/components/dropdown/dropdown.component';
 import { DateSlot } from '@shared/types/booking/BookingFormData';
-import { TimePeriod } from '@shared/types/booking/TimePeriod';
 import { DropdownOption } from '@shared/types/DropdownOption';
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
 import { combineLatest, map, Observable, take } from 'rxjs';

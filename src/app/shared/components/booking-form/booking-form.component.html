@@ -1,13 +1,13 @@
-<div class="relative flex flex-col w-screen max-w-8xl p-5 md:p-10 lg:p-20 space-y-5 md:space-y-10">
-    <ui-button variant="ghost" class="absolute left-10 top-3 w-24 h-10" (onClick)="onClickBack.emit($event)">
+<div class="relative flex flex-col w-screen max-w-8xl px-5 py-20 md:px-10 lg:p-20 space-y-5 md:space-y-10">
+    <ui-button variant="ghost" class="absolute top-3 w-24 h-10" (onClick)="onClickBack.emit($event)">
         <lucide-icon [img]="ChevronLeft" class="w-5 h-5 stroke-primary" />
         <p class="-translate-y-0.5 pr-2 text-nowrap">Go back</p>
     </ui-button>
     <h1 class="text-2xl md:text-4xl font-bold h-12">{{ title }}</h1>
 
-    <div class="flex flex-row items-start w-full space-x-[30px]">
-        <booking-reservation-details class="basis-2/3" [nameDisabled]="nameDisabled" [emailDisabled]="emailDisabled" />
-        <div class="flex flex-col basis-1/3 w-full p-10 space-y-8 rounded-[20px] bg-white">
+    <div class="flex flex-col lg:flex-row items-start w-full space-y-7 lg:space-x-[30px]">
+        <booking-reservation-details class="w-full lg:basis-2/3" [nameDisabled]="nameDisabled" [emailDisabled]="emailDisabled" />
+        <div class="flex flex-col lg:basis-1/3 w-full p-10 space-y-8 rounded-[20px] bg-white">
             <h2 class="text-3xl font-bold">Choose date and time</h2>
             <booking-date-range />
             <booking-time-range />

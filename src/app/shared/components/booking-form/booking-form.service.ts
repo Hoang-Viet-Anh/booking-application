@@ -6,12 +6,13 @@ import { CustomDateUtil } from "@shared/utils/CustomDateUtil";
 import { WorkspaceService } from "@workspaces/workspaces.service";
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of } from "rxjs";
 import { AvailableDateService } from "./available-date.service";
+import { environment } from "environments/environment";
 
 @Injectable({
     providedIn: 'root',
 })
 export class BookingFormService {
-    private apiUrl = "http://localhost:5249";
+    private apiUrl = environment.apiUrl;
 
     private bookingFormDataSubject = new BehaviorSubject<BookingFormData>({});
 
