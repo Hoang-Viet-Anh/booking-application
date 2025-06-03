@@ -75,11 +75,11 @@ export class BookingFormService {
         this.bookingFormDataSubject.next({ ...current, dateSlot: merged });
     }
 
-    updateTimeSlots(endTime: Date) {
+    updateTimeSlots(endTime: Date, startTime?: Date) {
         const current = this.bookingFormDataSubject.getValue();
         if (!current.workspaceId || !current.roomSizes) return;
         const dateSlot = {
-            startDate: CustomDateUtil.toUtcDate(current.dateSlot?.startDate),
+            startDate: CustomDateUtil.toUtcDate(startTime ?? current.dateSlot?.startDate),
             endDate: CustomDateUtil.toUtcDate(endTime),
             isStartTimeSelected: current.dateSlot?.isStartTimeSelected,
             isEndTimeSelected: current.dateSlot?.isEndTimeSelected

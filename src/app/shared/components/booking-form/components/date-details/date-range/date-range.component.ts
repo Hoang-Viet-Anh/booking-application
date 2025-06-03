@@ -4,6 +4,7 @@ import { AvailableDateService } from '@shared/components/booking-form/available-
 import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 import { DatePickerComponent } from '@shared/components/date-picker/date-picker.component';
 import { DateSlot } from '@shared/types/booking/BookingFormData';
+import { Workspace } from '@shared/types/workspace/Workspace';
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
 import { combineLatest, map, Observable, take } from 'rxjs';
 
@@ -22,6 +23,7 @@ export class DateRangeComponent {
   roomSize$: Observable<number[]>;
   maxDate$: Observable<Date | undefined>;
   bookedDates$: Observable<Date[]>;
+  workspace$: Observable<Workspace | undefined>;
 
   constructor(
     private bookingFormService: BookingFormService,
@@ -31,6 +33,7 @@ export class DateRangeComponent {
     this.roomSize$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.roomSizes ?? []));
     this.maxBookingDays$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.maxBookingDays));
     this.bookedDates$ = this.availableDateService.bookedDates$;
+    this.workspace$ = this.bookingFormService.findWorkspace();
 
     this.maxDate$ = combineLatest([this.startDate, this.maxBookingDays$, this.bookedDates$]).pipe(
       map(([startDate, maxBookingDays, bookedDates$]) => {
@@ -59,6 +62,11 @@ export class DateRangeComponent {
 
   updateStartDate(startDate: Date) {
     this.bookingFormService.updateDate({ startDate, isStartTimeSelected: false });
+    this.workspace$.subscribe(workspace => {
+      if (workspace?.maxBookingDays === 1) {
+        this.bookingFormService.updateTimeSlots(startDate, startDate);
+      }
+    });
   }
 
   updateEndDate(endDate: Date) {
