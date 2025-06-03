@@ -13,6 +13,8 @@ FROM nginx:alpine
 # Copy the built application
 COPY --from=build-stage /app/dist/booking-application/browser /usr/share/nginx/html
 
+RUN cd /usr/share/nginx/html && if [ -f index.csr.html ]; then mv index.csr.html index.html; fi
+
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
