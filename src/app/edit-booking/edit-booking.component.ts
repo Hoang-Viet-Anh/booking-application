@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingsService } from '@bookings/bookings.service';
 import { BookingFormComponent } from '@shared/components/booking-form/booking-form.component';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
 
 @Component({
   selector: 'app-edit-booking',

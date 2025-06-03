@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { BookingListComponent } from "./components/booking-list/booking-list.component";
 import { BookingsService } from './bookings.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-bookings',
@@ -10,11 +11,14 @@ import { BookingsService } from './bookings.service';
 export class BookingsComponent implements OnInit {
 
   constructor(
-    private bookingsService: BookingsService
+    private bookingsService: BookingsService,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) { }
 
   ngOnInit(): void {
-    this.bookingsService.fetchBookings();
+    if (isPlatformBrowser(this.platformId)) {
+      this.bookingsService.fetchBookings();
+    }
   }
 
 }
