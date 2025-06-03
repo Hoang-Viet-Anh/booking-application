@@ -1,4 +1,6 @@
-# Configuration
+Backend repo: https://github.com/Hoang-Viet-Anh/booking-app-api
+
+## Configuration
 
 The API URL is configured in the file:
 ```ts
