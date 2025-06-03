@@ -62,16 +62,12 @@ export class DateRangeComponent {
 
   updateStartDate(startDate: Date) {
     this.bookingFormService.updateDate({ startDate, isStartTimeSelected: false });
-    this.workspace$.subscribe(workspace => {
-      if (workspace?.maxBookingDays === 1) {
-        this.bookingFormService.updateTimeSlots(startDate, startDate);
-      }
-    });
+    this.bookingFormService.updateTimeSlots();
   }
 
   updateEndDate(endDate: Date) {
     this.bookingFormService.updateDate({ endDate, isEndTimeSelected: false });
-    this.bookingFormService.updateTimeSlots(endDate);
+    this.bookingFormService.updateTimeSlots();
   }
 
   get startDate(): Observable<Date | undefined> {
