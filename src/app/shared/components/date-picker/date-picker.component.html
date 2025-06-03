@@ -1,0 +1,13 @@
+<div class="flex flex-col space-y-2 font-medium">
+    <p class="font-bold text-xl">{{label}}</p>
+
+    <button type="button" [disabled]="disabled"
+        class="flex flex-row items-center justify-between w-full p-4 text-start bg-background rounded-lg border border-gray-300 disabled:opacity-50"
+        (click)="picker.open()">
+        <input matInput [min]="minDate" [max]="maxDate" [value]="date" [placeholder]="placeholder" 
+            (dateInput)="dateChangeHandler($event.value)" [matDatepicker]="picker" [matDatepickerFilter]="dateFilterFn"
+            class="select-none pointer-events-none">
+        <mat-datepicker #picker></mat-datepicker>
+        <lucide-icon [img]="CalendarRange" class="w-5 h-5" />
+    </button>
+</div>

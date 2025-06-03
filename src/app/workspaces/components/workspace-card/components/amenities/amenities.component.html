@@ -1,0 +1,12 @@
+<ng-container *ngIf="amenities">
+    <div class="flex flex-col space-y-3">
+        <h3 class="font-semibold text-lg">Amenities</h3>
+        <div class="grid grid-flow-col auto-cols-max gap-3">
+            <ng-container *ngFor="let name of amenities">
+                <ng-container *ngIf="getAmenityIcon(name) as iconPath">
+                    <ui-icon [iconPath]="iconPath" [alt]="name" />
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>

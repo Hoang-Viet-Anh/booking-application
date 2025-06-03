@@ -1,0 +1,11 @@
+<ng-container *ngIf="capacityOptions">
+    <div class="flex flex-col space-y-3">
+        <h3 class="font-semibold text-lg">Capacity options</h3>
+        <div class="flex flex-row space-x-4 items-center font-medium text-lg">
+            <ui-icon iconPath="/icons/user.svg" alt="user icon" />
+            <h2>
+                {{ formatCapacity() }}
+            </h2>
+        </div>
+    </div>
+</ng-container>

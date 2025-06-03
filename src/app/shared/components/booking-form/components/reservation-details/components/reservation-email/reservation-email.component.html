@@ -1,0 +1,2 @@
+<ui-input label="Email" type="email" [value]="(email$ | async) || ''" (onChange)="updateEmail($event)"
+    [disabled]="disabled" />

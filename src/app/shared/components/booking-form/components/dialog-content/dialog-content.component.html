@@ -1,0 +1,21 @@
+<div class="flex flex-col space-y-8">
+    <ng-container *ngIf="dialogSuccess; else dialogConflict">
+        <img src="/big-icons/success-icon.svg" alt="success" class="w-20 h-20" />
+        <h2 class="font-bold text-3xl">You're all set!</h2>
+        <p class="text-gray-600">
+            Your workspace {{(availabilityType$ | async)}} {{(roomSizesToString() | async)}} is booked from
+            <span class="text-black font-semibold"> {{startDateFormatted() | async}} to {{endDateFormatted() | async}}</span>. A
+            confirmation has been sent to your email
+            <span class="text-black font-semibold"> {{email$ | async}}</span>.
+        </p>
+    </ng-container>
+
+    <ng-template #dialogConflict>
+        <img src="/big-icons/error-icon.svg" alt="conflict" class="w-20 h-20" />
+        <h2 class="font-bold text-3xl">Selected time is not available</h2>
+        <p class="text-gray-600">Please choose a different time slot.</p>
+    </ng-template>
+
+    <ui-button [label]="dialogSuccess ? 'My bookings' : 'Check availability'"
+        (onClick)="onButtonClick(dialogSuccess)" />
+</div>

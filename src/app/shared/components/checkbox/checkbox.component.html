@@ -1,0 +1,8 @@
+<label class="flex flex-row items-center space-x-2 py-2">
+    <input type="checkbox" [checked]="isChecked" (change)="checkBoxChangeHandler($event)" class="hidden" />
+    <div class="flex items-center w-6 h-6 rounded-sm border transition-all duration-150"
+        [ngClass]="{'bg-primary border-primary': isChecked, 'bg-background border-gray-300': !isChecked}">
+        <lucide-icon *ngIf="isChecked" [img]="Check" class="w-4 h-4 stroke-background ml-0.5" />
+    </div>
+    <ng-content></ng-content>
+</label>

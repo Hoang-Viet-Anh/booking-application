@@ -1,0 +1,5 @@
+<div class="flex flex-col w-full space-y-2">
+    <p>Workspace type</p>
+    <ui-dropdown [options]="(options$ | async)" [selectedOption]="(selectedOption$ | async)"
+        (onSelectOption)="updateWorkspaceType($event)" />
+</div>

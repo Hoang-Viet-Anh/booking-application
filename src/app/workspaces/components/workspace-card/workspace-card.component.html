@@ -1,0 +1,23 @@
+<div class="flex flex-col space-y-6">
+    <ng-container *ngIf="availableWorkspaces$ | async as workspaces">
+        <ng-container *ngFor="let workspace of workspaces">
+            <div class="flex flex-col md:flex-row rounded-[20px] p-4 bg-white w-full md:space-x-6">
+                <workspace-carousel [images]="workspace.imageUrls ?? []" />
+                <div class="flex flex-col space-y-8 w-full py-3">
+                    <workspace-card-title [title]="workspace.title" [description]="workspace.description" />
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <ng-container *ngIf="workspace.amenities">
+                            <workspace-amenities [amenities]="workspace.amenities" />
+                        </ng-container>
+                        <ng-container *ngIf="workspace.title">
+                            <workspace-capacity-options [capacityOptions]="workspace.availability.rooms" />
+                        </ng-container>
+                        <ng-container *ngIf="workspace.availability">
+                            <workspace-availability [availability]="workspace.availability" />
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>

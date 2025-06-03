@@ -1,0 +1,24 @@
+<div class="relative flex flex-col w-full space-y-2 text-left font-medium">
+    <ng-content></ng-content>
+    <button (click)="toggleDropdown()" [disabled]="disabled"
+        class="flex flex-row items-center justify-between w-full bg-background border border-gray-300 p-4 rounded-lg transition-all duration-150 disabled:opacity-50">
+        {{ selectedOption?.name || placeholder }}
+        <lucide-icon [img]="ChevronDown" [ngClass]="{ 'rotate-180': open }"
+            class="w-5 h-5 transition-all duration-200" />
+    </button>
+
+    <div class="absolute z-10 mt-16 w-full max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-md font-normal transition-all duration-150 select-none"
+        [ngClass]="{'opacity-0 pointer-events-none -translate-y-1': !open, 'opacity-100 pointer-events-auto translate-0': open}">
+        <ul>
+            <ng-container *ngIf="options && options.length > 0; else noOptions">
+                <li *ngFor="let option of options" (click)="selectOption(option.id)"
+                    class="px-4 py-3 hover:bg-primary/10">
+                    {{ option.name }}
+                </li>
+            </ng-container>
+            <ng-template #noOptions>
+                <li class="px-4 py-3">No options available</li>
+            </ng-template>
+        </ul>
+    </div>
+</div>
