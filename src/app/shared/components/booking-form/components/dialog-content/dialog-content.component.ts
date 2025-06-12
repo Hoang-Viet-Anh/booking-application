@@ -18,11 +18,11 @@ import { StringFormatUtil } from '@shared/utils/StringFormatUtil';
   styleUrl: './dialog-content.component.css'
 })
 export class DialogContentComponent {
-  email$: Observable<string | undefined>;
-  startDate$: Observable<Date | undefined>;
-  endDate$: Observable<Date | undefined>;
-  roomSizes$: Observable<number[] | undefined>;
-  availabilityType$: Observable<string | undefined>;
+  email$?: Observable<string | undefined>;
+  startDate$?: Observable<Date | undefined>;
+  endDate$?: Observable<Date | undefined>;
+  roomSizes$?: Observable<number[] | undefined>;
+  availabilityType$?: Observable<string | undefined>;
 
   @Input() dialogSuccess: boolean = true;
 
@@ -32,11 +32,7 @@ export class DialogContentComponent {
     private bookingFormService: BookingFormService,
     private router: Router
   ) {
-    this.email$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.email));
-    this.startDate$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot?.startDate));
-    this.endDate$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot?.endDate));
-    this.roomSizes$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.roomSizes));
-    this.availabilityType$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.type));
+
   }
 
 
@@ -52,19 +48,19 @@ export class DialogContentComponent {
     this.onDialogClose.emit();
   }
 
-  roomSizesToString(): Observable<string | undefined> {
-    return this.roomSizes$.pipe(
-      map(roomSizes => {
-        return StringFormatUtil.roomSizesToString(roomSizes);
-      })
-    );
-  }
+  // roomSizesToString(): Observable<string | undefined> {
+  //   return this.roomSizes$.pipe(
+  //     map(roomSizes => {
+  //       return StringFormatUtil.roomSizesToString(roomSizes);
+  //     })
+  //   );
+  // }
 
-  startDateFormatted(): Observable<string | undefined> {
-    return this.startDate$.pipe(map(date => CustomDateUtil.dateTimeFormat(date)));
-  }
+  // startDateFormatted(): Observable<string | undefined> {
+  //   return this.startDate$.pipe(map(date => CustomDateUtil.dateTimeFormat(date)));
+  // }
 
-  endDateFormatted(): Observable<string | undefined> {
-    return this.endDate$.pipe(map(date => CustomDateUtil.dateTimeFormat(date)));
-  }
+  // endDateFormatted(): Observable<string | undefined> {
+  //   return this.endDate$.pipe(map(date => CustomDateUtil.dateTimeFormat(date)));
+  // }
 }

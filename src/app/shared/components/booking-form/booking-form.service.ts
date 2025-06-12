@@ -17,7 +17,7 @@ export class BookingFormService {
     private bookingFormDataSubject = new BehaviorSubject<BookingFormData>({});
 
     bookingFormData$ = this.bookingFormDataSubject.asObservable();
-    workspaces$: Observable<Workspace[]>;
+    //workspaces$: Observable<Workspace[]>;
     bookedDates$: Observable<Date[]>;
 
     constructor(
@@ -25,7 +25,7 @@ export class BookingFormService {
         private httpClient: HttpClient,
         private availableDateService: AvailableDateService,
     ) {
-        this.workspaces$ = this.workspaceService.workspaces$;
+       // this.workspaces$ = this.workspaceService.workspaces$;
         this.bookedDates$ = this.availableDateService.bookedDates$;
     }
 
@@ -47,33 +47,33 @@ export class BookingFormService {
         this.bookingFormDataSubject.next({ ...current, dateSlot: merged });
     }
 
-    updateDate(data: Partial<DateSlot>) {
-        const current = this.bookingFormDataSubject.getValue();
-        const merged = { ...current.dateSlot, ...data };
-        const workspace = this.workspaceService.findWorkspace(current.workspaceId);
+    // updateDate(data: Partial<DateSlot>) {
+    //     const current = this.bookingFormDataSubject.getValue();
+    //     const merged = { ...current.dateSlot, ...data };
+    //     const workspace = this.workspaceService.findWorkspace(current.workspaceId);
 
-        if (!workspace) return;
-        if (workspace.maxBookingDays === 1) {
-            merged.endDate = merged.startDate;
-            merged.isEndTimeSelected = false;
-        } else if (merged.startDate && merged.endDate) {
-            if (CustomDateUtil.compareDate(merged.startDate, merged.endDate) > 0) {
-                merged.endDate = undefined;
-                merged.isEndTimeSelected = false;
-            } else {
-                const msDiff = merged.endDate.getTime() - merged.startDate.getTime();
-                const maxDiff = workspace.maxBookingDays * 24 * 60 * 60 * 1000;
-                const overlappingDate = this.availableDateService.getOverlappingDate(merged.startDate, merged.endDate);
+    //     if (!workspace) return;
+    //     if (workspace.maxBookingDays === 1) {
+    //         merged.endDate = merged.startDate;
+    //         merged.isEndTimeSelected = false;
+    //     } else if (merged.startDate && merged.endDate) {
+    //         if (CustomDateUtil.compareDate(merged.startDate, merged.endDate) > 0) {
+    //             merged.endDate = undefined;
+    //             merged.isEndTimeSelected = false;
+    //         } else {
+    //             const msDiff = merged.endDate.getTime() - merged.startDate.getTime();
+    //             const maxDiff = workspace.maxBookingDays * 24 * 60 * 60 * 1000;
+    //             const overlappingDate = this.availableDateService.getOverlappingDate(merged.startDate, merged.endDate);
 
-                if (msDiff > maxDiff || overlappingDate) {
-                    merged.endDate = undefined;
-                    merged.isEndTimeSelected = false;
-                }
-            }
-        }
+    //             if (msDiff > maxDiff || overlappingDate) {
+    //                 merged.endDate = undefined;
+    //                 merged.isEndTimeSelected = false;
+    //             }
+    //         }
+    //     }
 
-        this.bookingFormDataSubject.next({ ...current, dateSlot: merged });
-    }
+    //     this.bookingFormDataSubject.next({ ...current, dateSlot: merged });
+    // }
 
     updateTimeSlots() {
         const current = this.bookingFormDataSubject.getValue();
@@ -175,12 +175,12 @@ export class BookingFormService {
             )
     }
 
-    findWorkspace(): Observable<Workspace | undefined> {
-        return combineLatest([this.bookingFormData$, this.workspaces$]).pipe(
-            map(([data, workspaces]) => {
-                if (!data.workspaceId) return;
-                return workspaces.find((w) => w.id === data.workspaceId);
-            }),
-        );
-    }
+    // findWorkspace(): Observable<Workspace | undefined> {
+    //     return combineLatest([this.bookingFormData$, this.workspaces$]).pipe(
+    //         map(([data, workspaces]) => {
+    //             if (!data.workspaceId) return;
+    //             return workspaces.find((w) => w.id === data.workspaceId);
+    //         }),
+    //     );
+    // }
 }

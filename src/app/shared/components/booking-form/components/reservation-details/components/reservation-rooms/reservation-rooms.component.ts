@@ -12,16 +12,16 @@ import { map, Observable } from 'rxjs';
   styleUrl: './reservation-rooms.component.css'
 })
 export class ReservationRoomsComponent {
-  roomType$: Observable<string | undefined>;
-  roomCapacities$: Observable<number[] | undefined>
-  roomSizes$: Observable<number[] | undefined>
+  roomType$?: Observable<string | undefined>;
+  roomCapacities$?: Observable<number[] | undefined>
+  roomSizes$?: Observable<number[] | undefined>
 
   constructor(
     private bookingFormService: BookingFormService
   ) {
-    this.roomSizes$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.roomSizes));
-    this.roomCapacities$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.rooms.map(r => r.capacity)));
-    this.roomType$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.type));
+    // this.roomSizes$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.roomSizes));
+    // this.roomCapacities$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.rooms.map(r => r.capacity)));
+    // this.roomType$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.type));
   }
 
   onChangeRoomSizes(size: number, isChecked: boolean) {

@@ -1,3 +1,3 @@
 export const environment = {
-    apiUrl: 'https://booking-api.crocondine.cloud'
+    apiUrl: 'http://localhost:5000'
 };

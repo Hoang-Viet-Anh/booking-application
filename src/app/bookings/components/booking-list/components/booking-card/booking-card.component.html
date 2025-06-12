@@ -1,11 +1,11 @@
 <div class="flex flex-col sm:flex-row p-4 rounded-[20px] bg-white space-x-8">
     <div class="flex w-full sm:max-w-2xs aspect-video">
-        <img [src]="(workspaceImage$ | async)" alt="workspace"
-            class="w-full flex-shrink-0 object-cover rounded-[20px]" />
+        <!-- <img [src]="(workspaceImage$ | async)" alt="workspace"
+            class="w-full flex-shrink-0 object-cover rounded-[20px]" /> -->
     </div>
     <div class="flex flex-col w-full py-3 space-y-6 font-medium text-lg">
         <div class="flex flex-col md:flex-row w-full justify-between space-y-4 md:space-y-0">
-            <h2 class="font-semibold text-3xl">{{ workspaceTitle }} {{ roomSizesToString() }}</h2>
+            <!-- <h2 class="font-semibold text-3xl">{{ workspaceTitle }} {{ roomSizesToString() }}</h2> -->
             <div class="flex flex-row items-center space-x-4">
                 <ui-button variant="outlined" (onClick)="onEditBooking()">
                     <div class="flex items-center px-3">
@@ -41,7 +41,7 @@
         </p>
 
         <div class="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0 md:space-x-4">
-            <ui-button variant="outlined" label="Yes , cancel it" class="w-full md:flex-1/2" (onClick)="onDeleteBooking()" />
+            <!-- <ui-button variant="outlined" label="Yes , cancel it" class="w-full md:flex-1/2" (onClick)="onDeleteBooking()" /> -->
             <ui-button variant="primary" label="No, keep it" class="w-full md:flex-1/2" (onClick)="closeDialog()" />
         </div>
     </div>

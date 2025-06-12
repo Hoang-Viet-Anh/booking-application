@@ -1,0 +1,13 @@
+<ng-container *ngIf="coworking">
+    <div class="flex flex-col md:flex-row rounded-[20px] p-4 bg-white w-full md:space-x-6">
+        <workspace-carousel [images]="coworking.imageUrls ?? []" />
+        <div class="flex flex-col gap-6 w-full py-3">
+            <workspace-card-title [title]="coworking.title" [description]="coworking.description"
+                [buttonLabel]="buttonLabel" (onButtonClick)="onButtonClick()" />
+            <div class="grid grid-cols-1 gap-3">
+                <coworking-location [location]="coworking.location" />
+                <coworking-workspace-capacity [workspaceCapacity]="coworking.workspacesCapacity" />
+            </div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,15 @@
+<ng-container *ngIf="workspaceCapacity as wc">
+    <div class="flex flex-row gap-4 items-center">
+        <ui-icon iconPath="/icons/armchair.svg" alt="chair" />
+        <div class="flex flex-row gap-4 font-medium">
+            <ng-container *ngFor="let capacity of wc">
+                <ng-container *ngIf="(getWorkspace(capacity.workspaceId) | async) as workspace">
+                    <ng-container *ngIf="getCapacitySum(capacity.availability) as capacitySum">
+                        <p>{{workspace.areaTypeEmoji}} {{capacitySum}} {{workspace.areaType}}{{capacitySum === 1 ? '' :
+                            's'}}</p>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>

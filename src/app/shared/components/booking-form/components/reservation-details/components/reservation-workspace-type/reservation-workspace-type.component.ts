@@ -13,20 +13,20 @@ import { combineLatest, map, Observable } from 'rxjs';
   styleUrl: './reservation-workspace-type.component.css'
 })
 export class ReservationWorkspaceTypeComponent {
-  options$: Observable<DropdownOption[]>;
-  selectedOption$: Observable<DropdownOption | undefined>;
+  options$?: Observable<DropdownOption[]>;
+  selectedOption$?: Observable<DropdownOption | undefined>;
 
   constructor(
     private workspaceService: WorkspaceService,
     private bookingFormService: BookingFormService
   ) {
-    this.options$ = this.workspaceService.workspaces$.pipe(map(w => w.map(workspace => ({ id: workspace.id, name: workspace.title }))));
-    this.selectedOption$ = combineLatest([this.options$, this.bookingFormService.bookingFormData$]).pipe(
-      map(([options, data]) => {
-        if (!data.workspaceId) return;
-        return options.find(o => o.id === data.workspaceId);
-      })
-    );
+   // this.options$ = this.workspaceService.workspaces$.pipe(map(w => w.map(workspace => ({ id: workspace.id, name: workspace.title }))));
+    // this.selectedOption$ = combineLatest([this.options$, this.bookingFormService.bookingFormData$]).pipe(
+    //   map(([options, data]) => {
+    //     if (!data.workspaceId) return;
+    //     return options.find(o => o.id === data.workspaceId);
+    //   })
+    // );
   }
 
   updateWorkspaceType(workspaceId: string) {

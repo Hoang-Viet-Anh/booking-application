@@ -17,7 +17,7 @@ export class BookingsComponent implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.bookingsService.fetchBookings();
+      //this.bookingsService.fetchBookings();
     }
   }
 
