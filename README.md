@@ -1,4 +1,5 @@
 Backend repo: https://github.com/Hoang-Viet-Anh/booking-app-api
+Deployed on: https://booking.crocondine.cloud
 
 ## Configuration
 
