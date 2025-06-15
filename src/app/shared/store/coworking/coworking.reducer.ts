@@ -8,4 +8,4 @@ export const coworkingReducer = createReducer(
     initialState,
     on(loadCoworkingsSuccess, (_state, action) => action.coworkings ?? []),
     on(loadCoworkingsFailure, () => initialState),
-)
+) 

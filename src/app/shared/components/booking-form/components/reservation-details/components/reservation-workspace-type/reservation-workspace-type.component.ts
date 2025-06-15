@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
+import { Store } from '@ngrx/store';
 import { DropdownComponent } from '@shared/components/dropdown/dropdown.component';
+import { updateWorkspaceId } from '@shared/store/create-booking/create-booking.actions';
+import { selectBookingWorkspace, selectCoworkingWorkspaces } from '@shared/store/create-booking/create-booking.selector';
+import { selectAllWorkspaces } from '@shared/store/workspace/workspace.selector';
 import { DropdownOption } from '@shared/types/DropdownOption';
-import { WorkspaceService } from '@workspaces/workspaces.service';
-import { combineLatest, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'reservation-workspace-type',
@@ -17,19 +19,16 @@ export class ReservationWorkspaceTypeComponent {
   selectedOption$?: Observable<DropdownOption | undefined>;
 
   constructor(
-    private workspaceService: WorkspaceService,
-    private bookingFormService: BookingFormService
+    private store: Store
   ) {
-   // this.options$ = this.workspaceService.workspaces$.pipe(map(w => w.map(workspace => ({ id: workspace.id, name: workspace.title }))));
-    // this.selectedOption$ = combineLatest([this.options$, this.bookingFormService.bookingFormData$]).pipe(
-    //   map(([options, data]) => {
-    //     if (!data.workspaceId) return;
-    //     return options.find(o => o.id === data.workspaceId);
-    //   })
-    // );
+    this.options$ = this.store.select(selectCoworkingWorkspaces).pipe(map(w => w.map(workspace => ({ id: workspace.id, name: workspace.title }))));
+    this.selectedOption$ = this.store.select(selectBookingWorkspace).pipe(map(workspace => {
+      if (!workspace) return;
+      return { id: workspace.id, name: workspace.title };
+    }));
   }
 
   updateWorkspaceType(workspaceId: string) {
-    this.bookingFormService.updateWorkspaceId(workspaceId);
+    this.store.dispatch(updateWorkspaceId({ workspaceId }));
   }
 }

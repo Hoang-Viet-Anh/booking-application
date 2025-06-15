@@ -12,6 +12,13 @@ import { CoworkingEffects } from '@shared/store/coworking/coworking.effects';
 import { WorkspaceEffects } from '@shared/store/workspace/workspace.effects';
 import { bookingReducer } from '@shared/store/booking/booking.reducer';
 import { BookingEffects } from '@shared/store/booking/booking.effects';
+import { createBookingReducer } from '@shared/store/create-booking/create-booking.reducer';
+import { dateTimeReducer } from '@shared/store/date-time/date-time.reducer';
+import { DateTimeEffects } from '@shared/store/date-time/date-time.effects';
+import { bookingStatusReducer } from '@shared/store/booking-status/booking-status.reducer';
+import { CreateBookingEffects } from '@shared/store/create-booking/create-booking.effects';
+import { AiAssistantEffects } from '@shared/store/ai-assistant/ai-assistant.effects';
+import { aiAssistantReducer } from '@shared/store/ai-assistant/ai-assistant.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,12 +29,19 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       coworkings: coworkingReducer,
       workspaces: workspaceReducer,
-      bookings: bookingReducer
+      bookings: bookingReducer,
+      createBooking: createBookingReducer,
+      dateTime: dateTimeReducer,
+      bookingStatus: bookingStatusReducer,
+      aiAssistant: aiAssistantReducer
     }),
     provideEffects(
       CoworkingEffects,
       WorkspaceEffects,
-      BookingEffects
+      BookingEffects,
+      DateTimeEffects,
+      CreateBookingEffects,
+      AiAssistantEffects
     ),
   ]
 };

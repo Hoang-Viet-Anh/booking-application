@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BookingFormComponent } from '@shared/components/booking-form/booking-form.component';
+import { editBooking } from '@shared/store/booking/booking.actions';
+import { loadBookedDates, loadTimeSlots } from '@shared/store/date-time/date-time.actions';
 
 @Component({
   selector: 'app-edit-booking',
@@ -14,6 +17,7 @@ export class EditBookingComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private store: Store
   ) { }
 
   ngOnInit(): void {
@@ -21,7 +25,9 @@ export class EditBookingComponent implements OnInit {
     if (!id) {
       this.router.navigate([this.backRoute]);
     }
-    // this.bookingsService.fetchBookingById(id!);
+    this.store.dispatch(editBooking({ id: id! }));
+    this.store.dispatch(loadBookedDates());
+    this.store.dispatch(loadTimeSlots());
   }
 
   onClickBack() {

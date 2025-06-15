@@ -5,7 +5,9 @@ export interface BookingFormData {
     coworkingId?: string;
     workspaceId?: string;
     dateSlot?: DateSlot;
-    roomSizes?: number[];
+    startDate?: Date;
+    endDate?: string;
+    areaCapacity?: number[];
 }
 
 export interface DateSlot {

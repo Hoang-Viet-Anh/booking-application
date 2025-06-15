@@ -8,7 +8,10 @@ export const selectAllWorkspaces = createSelector(
     (state) => state
 );
 
-export const selectWorkspaceById = (id: string) => createSelector(
+export const selectWorkspaceById = (id: string | undefined) => createSelector(
     selectAllWorkspaces,
-    (workspaces) => workspaces?.find(workspace => workspace.id === id)
+    (workspaces) => {
+        if (!id) return;
+        return workspaces?.find(workspace => workspace.id === id)
+    }
 );

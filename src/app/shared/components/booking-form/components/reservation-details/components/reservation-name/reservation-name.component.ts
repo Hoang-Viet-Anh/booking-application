@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
+import { Store } from '@ngrx/store';
 import { InputComponent } from '@shared/components/input/input.component';
+import { updateBooking } from '@shared/store/create-booking/create-booking.actions';
+import { selectCreateBooking } from '@shared/store/create-booking/create-booking.selector';
 import { map, Observable } from 'rxjs';
 
 @Component({
@@ -11,14 +13,14 @@ import { map, Observable } from 'rxjs';
   styleUrl: './reservation-name.component.css'
 })
 export class ReservationNameComponent {
-  name$: Observable<string>;
+  name$: Observable<string | undefined>;
   @Input() disabled = false;
 
-  constructor(private bookingFormService: BookingFormService) {
-    this.name$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.name ?? ''));
+  constructor(private store: Store) {
+    this.name$ = this.store.select(selectCreateBooking).pipe(map(data => data.name));
   }
 
   updateName(name: string) {
-    this.bookingFormService.updateForm({ name });
+    this.store.dispatch(updateBooking({ name }));
   }
 }

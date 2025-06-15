@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { coworkingRoute } from '@core/app.routes';
+import { Store } from '@ngrx/store';
 import { BookingFormComponent } from '@shared/components/booking-form/booking-form.component';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
-import { map, switchMap, tap } from 'rxjs';
+import { resetBooking, updateBooking } from '@shared/store/create-booking/create-booking.actions';
 
 @Component({
   selector: 'app-create-booking',
@@ -13,12 +13,17 @@ import { map, switchMap, tap } from 'rxjs';
 export class CreateBookingComponent implements OnInit {
   constructor(
     private router: Router,
-    private bookingFormService: BookingFormService,
+    private store: Store,
     private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
-    this.bookingFormService.setBookingForm({});
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate([coworkingRoute]);
+    }
+    this.store.dispatch(resetBooking());
+    this.store.dispatch(updateBooking({ coworkingId: id! }));
   }
 
   onClickBack() {

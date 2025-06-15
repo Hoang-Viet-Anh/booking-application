@@ -1,10 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { BookingFormService } from "@shared/components/booking-form/booking-form.service";
 import { BookingFormData } from "@shared/types/booking/BookingFormData";
 import { environment } from "environments/environment";
-import { BehaviorSubject, map, Observable } from "rxjs";
+import { Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root',

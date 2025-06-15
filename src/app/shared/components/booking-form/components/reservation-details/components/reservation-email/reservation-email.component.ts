@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
+import { Store } from '@ngrx/store';
 import { InputComponent } from '@shared/components/input/input.component';
+import { updateBooking } from '@shared/store/create-booking/create-booking.actions';
+import { selectCreateBooking } from '@shared/store/create-booking/create-booking.selector';
 import { map, Observable } from 'rxjs';
 
 @Component({
@@ -11,14 +13,14 @@ import { map, Observable } from 'rxjs';
   styleUrl: './reservation-email.component.css'
 })
 export class ReservationEmailComponent {
-  email$: Observable<string>;
+  email$: Observable<string | undefined>;
   @Input() disabled = false;
 
-  constructor(private bookingFormService: BookingFormService) {
-    this.email$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.email ?? ''));
+  constructor(private store: Store) {
+    this.email$ = this.store.select(selectCreateBooking).pipe(map(data => data.email));
   }
 
   updateEmail(email: string) {
-    this.bookingFormService.updateForm({ email });
+    this.store.dispatch(updateBooking({ email }));
   }
 }

@@ -8,7 +8,10 @@ export const selectAllCoworkings = createSelector(
     (state) => state
 );
 
-export const selectCoworkingById = (id: string) => createSelector(
+export const selectCoworkingById = (id: string | undefined) => createSelector(
     selectAllCoworkings,
-    (coworkings) => coworkings.find(coworking => coworking.id === id)
-);
+    (coworkings) => {
+        if (!id) return;
+        return coworkings.find(coworking => coworking.id === id)
+    }
+); 
