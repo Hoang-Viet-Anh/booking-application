@@ -1,23 +1,25 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { BookingListComponent } from "./components/booking-list/booking-list.component";
-import { BookingsService } from './bookings.service';
 import { isPlatformBrowser } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { loadBookings } from '@shared/store/booking/booking.actions';
+import { AiAssistantComponent } from "./components/ai-assistant/ai-assistant.component";
 
 @Component({
   selector: 'app-bookings',
-  imports: [BookingListComponent],
+  imports: [BookingListComponent, AiAssistantComponent],
   templateUrl: './bookings.component.html',
 })
 export class BookingsComponent implements OnInit {
 
   constructor(
-    private bookingsService: BookingsService,
+    private store: Store,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) { }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.bookingsService.fetchBookings();
+      this.store.dispatch(loadBookings());
     }
   }
 

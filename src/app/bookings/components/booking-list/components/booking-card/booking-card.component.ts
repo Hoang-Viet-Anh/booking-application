@@ -1,17 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
+import { Component, Input, OnChanges } from '@angular/core';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { BookingFormData } from '@shared/types/booking/BookingFormData';
 import { LucideAngularModule, SquarePen, Trash } from 'lucide-angular';
 import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
-import { map, Observable } from 'rxjs';
-import { WorkspaceService } from '@workspaces/workspaces.service';
 import { DialogComponent } from '@shared/components/dialog/dialog.component';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { Router } from '@angular/router';
 import { StringFormatUtil } from '@shared/utils/StringFormatUtil';
-import { BookingsService } from '@bookings/bookings.service';
+import { bookingsRoute } from '@core/app.routes';
+import { map, Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectWorkspaceById } from '@shared/store/workspace/workspace.selector';
+import { selectCoworkingById } from '@shared/store/coworking/coworking.selector';
+import { deleteBookingRequest } from '@shared/store/create-booking/create-booking.actions';
+import { selectBookingStatus } from '@shared/store/booking-status/booking-status.selector';
 
 @Component({
   standalone: true,
@@ -20,44 +23,51 @@ import { BookingsService } from '@bookings/bookings.service';
   templateUrl: './booking-card.component.html',
   styleUrl: './booking-card.component.css'
 })
-export class BookingCardComponent {
+export class BookingCardComponent implements OnChanges {
   readonly SqarePen = SquarePen;
   readonly Trash = Trash;
-
-  workspaceImage$: Observable<string | undefined>;
 
   @Input() bookingData: BookingFormData = {};
 
   isDialogOpen = false;
 
+  workspaceTitle$?: Observable<string | undefined>;
+  workspaceImage$?: Observable<string | undefined>;
+  coworkingTitle$?: Observable<string | undefined>;
+  coworkingLocation$?: Observable<string | undefined>;
+
   constructor(
-    private workspaceService: WorkspaceService,
     private router: Router,
-    private bookingFormService: BookingFormService,
-    private bookingsService: BookingsService
+    private store: Store
   ) {
-    this.workspaceImage$ = this.workspaceService.workspaces$.pipe(map(workspaces => workspaces.find(w => w.id === this.bookingData.workspaceId)?.imageUrls?.[0]));
+    this.store.select(selectBookingStatus).subscribe(status => {
+      this.isDialogOpen = false;
+    })
   }
 
-  get workspaceTitle(): string | undefined {
-    return this.workspaceService.findWorkspace(this.bookingData.workspaceId)?.title;
+  ngOnChanges() {
+    if (!this.bookingData) return;
+
+    const { workspaceId, coworkingId } = this.bookingData;
+
+    if (workspaceId) {
+      this.workspaceTitle$ = this.store.select(selectWorkspaceById(this.bookingData.workspaceId)).pipe(map(workspace => workspace?.title));
+      this.workspaceImage$ = this.store.select(selectWorkspaceById(this.bookingData.workspaceId)).pipe(map(workspace =>
+        workspace?.imageUrls && workspace.imageUrls.length > 0 ? workspace.imageUrls[0] : undefined));
+    }
+
+    if (coworkingId) {
+      this.coworkingTitle$ = this.store.select(selectCoworkingById(this.bookingData.coworkingId)).pipe(map(coworking => coworking?.title));
+      this.coworkingLocation$ = this.store.select(selectCoworkingById(this.bookingData.coworkingId)).pipe(map(coworking => coworking?.location));
+    }
   }
 
   onEditBooking() {
-    this.router.navigate(['/bookings/' + this.bookingData.id]);
+    this.router.navigate([`${bookingsRoute}/${this.bookingData.id}`]);
   }
 
   onDeleteBooking() {
-    if (!this.bookingData.id) {
-      this.closeDialog();
-      return;
-    }
-    this.bookingFormService.deleteBookingRequest(this.bookingData.id).subscribe(success => {
-      if (success) {
-        this.bookingsService.fetchBookings();
-        this.closeDialog();
-      }
-    });
+    this.store.dispatch(deleteBookingRequest({ id: this.bookingData.id! }));
   }
 
   openDialog() {
@@ -68,8 +78,8 @@ export class BookingCardComponent {
     this.isDialogOpen = false;
   }
 
-  roomSizesToString(): string | undefined {
-    return StringFormatUtil.roomSizesToString(this.bookingData.roomSizes);
+  areaCapacityToString(): string | undefined {
+    return StringFormatUtil.areaCapacityToString(this.bookingData.areaCapacity);
   }
 
   dateToString(): string | undefined {

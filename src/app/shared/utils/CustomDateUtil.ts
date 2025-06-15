@@ -35,6 +35,15 @@ function dateFormat(date: Date | undefined): string | undefined {
     return dateString;
 }
 
+function timeFormat(date: Date | undefined): string {
+    if (!date) return '';
+    const timeString = date.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    return timeString;
+}
+
 function dateTimeFormat(date: Date | undefined): string {
     if (!date) return '';
     const dateString = date.toLocaleDateString(undefined, {
@@ -50,19 +59,19 @@ function dateTimeFormat(date: Date | undefined): string {
     return `${dateString}, ${timeString}`;
 }
 
-function timeFormat(date: Date | undefined): string {
-    if (!date) return '';
-    const timeString = date.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    return timeString;
-}
-
 function toUtcDate(date: Date | undefined): Date | undefined {
     if (!date) return undefined;
     const newDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     return newDate;
+}
+
+function getOverlappingDate(startDate: Date, maxDate: Date, bookedDates: Date[]): Date | undefined {
+    const overlappingDate = bookedDates.find(date => CustomDateUtil.compareDate(date, startDate) > 0 && CustomDateUtil.compareDate(date, maxDate) < 0);
+    return overlappingDate;
+}
+
+function fixUtcString(date: string): Date {
+    return new Date(date.includes('Z') ? date : date + 'Z');
 }
 
 export const CustomDateUtil = {
@@ -72,5 +81,7 @@ export const CustomDateUtil = {
     dateFormat,
     dateTimeFormat,
     timeFormat,
-    toUtcDate
+    toUtcDate,
+    getOverlappingDate,
+    fixUtcString
 }

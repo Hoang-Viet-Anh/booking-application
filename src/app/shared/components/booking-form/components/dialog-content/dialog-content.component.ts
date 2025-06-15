@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { combineLatest, map, Observable } from 'rxjs';
-import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
-import { BookingFormService } from '../../booking-form.service';
+import { map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from "../../../button/button.component";
 import { Router } from '@angular/router';
-import { WorkspaceService } from '@workspaces/workspaces.service';
+import { Store } from '@ngrx/store';
+import { selectBookingWorkspace, selectCreateBooking, selectDateSlot } from '@shared/store/create-booking/create-booking.selector';
+import { resetBookingDate } from '@shared/store/create-booking/create-booking.actions';
 import { StringFormatUtil } from '@shared/utils/StringFormatUtil';
+import { CustomDateUtil } from '@shared/utils/CustomDateUtil';
+import { resetBookingStatus } from '@shared/store/booking-status/booking-status.actions';
 
 @Component({
   selector: 'booking-dialog-content',
@@ -21,41 +23,39 @@ export class DialogContentComponent {
   email$: Observable<string | undefined>;
   startDate$: Observable<Date | undefined>;
   endDate$: Observable<Date | undefined>;
-  roomSizes$: Observable<number[] | undefined>;
-  availabilityType$: Observable<string | undefined>;
+  areaCapacity$: Observable<number[] | undefined>;
+  areaType$: Observable<string | undefined>;
 
   @Input() dialogSuccess: boolean = true;
 
   @Output() onDialogClose = new EventEmitter();
 
   constructor(
-    private bookingFormService: BookingFormService,
+    private store: Store,
     private router: Router
   ) {
-    this.email$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.email));
-    this.startDate$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot?.startDate));
-    this.endDate$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.dateSlot?.endDate));
-    this.roomSizes$ = this.bookingFormService.bookingFormData$.pipe(map(data => data.roomSizes));
-    this.availabilityType$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.type));
+    this.email$ = this.store.select(selectCreateBooking).pipe(map(data => data.email));
+    this.areaCapacity$ = this.store.select(selectCreateBooking).pipe(map(data => data.areaCapacity));
+    this.areaType$ = this.store.select(selectBookingWorkspace).pipe(map(data => data?.areaType));
+    this.startDate$ = this.store.select(selectDateSlot).pipe(map(slot => slot?.startDate));
+    this.endDate$ = this.store.select(selectDateSlot).pipe(map(slot => slot?.endDate));
   }
 
-
-
   onButtonClick(isSuccess: boolean) {
+    this.store.dispatch(resetBookingStatus());
     if (isSuccess) {
       this.router.navigate(['/bookings']);
     } else {
-      this.bookingFormService.updateForm({
-        dateSlot: undefined,
-      })
+      this.store.dispatch(resetBookingDate());
     }
     this.onDialogClose.emit();
   }
 
-  roomSizesToString(): Observable<string | undefined> {
-    return this.roomSizes$.pipe(
-      map(roomSizes => {
-        return StringFormatUtil.roomSizesToString(roomSizes);
+  areaCapacityToString(): Observable<string | undefined> {
+    if (!this.areaCapacity$) return of();
+    return this.areaCapacity$.pipe(
+      map(areaCapacity => {
+        return StringFormatUtil.areaCapacityToString(areaCapacity);
       })
     );
   }

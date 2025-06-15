@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BookingFormService } from '@shared/components/booking-form/booking-form.service';
+import { Store } from '@ngrx/store';
 import { CheckboxComponent } from '@shared/components/checkbox/checkbox.component';
-import { WorkspaceService } from '@workspaces/workspaces.service';
+import { addAreaCapacity, removeAreaCapacity } from '@shared/store/create-booking/create-booking.actions';
+import { selectBookingWorkspace, selectCoworkingAreaCapacities, selectCreateBooking } from '@shared/store/create-booking/create-booking.selector';
+import { loadBookedDates } from '@shared/store/date-time/date-time.actions';
 import { map, Observable } from 'rxjs';
 
 @Component({
@@ -12,23 +14,24 @@ import { map, Observable } from 'rxjs';
   styleUrl: './reservation-rooms.component.css'
 })
 export class ReservationRoomsComponent {
-  roomType$: Observable<string | undefined>;
-  roomCapacities$: Observable<number[] | undefined>
-  roomSizes$: Observable<number[] | undefined>
+  areaType$: Observable<string | undefined>;
+  bookedAreaCapacity$: Observable<number[] | undefined>
+  areaCapacity$: Observable<number[] | undefined>
 
   constructor(
-    private bookingFormService: BookingFormService
+    private store: Store
   ) {
-    this.roomSizes$ = this.bookingFormService.bookingFormData$.pipe(map((data) => data.roomSizes));
-    this.roomCapacities$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.rooms.map(r => r.capacity)));
-    this.roomType$ = this.bookingFormService.findWorkspace().pipe(map(workspace => workspace?.availability.type));
+    this.areaType$ = this.store.select(selectBookingWorkspace).pipe(map(workspace => workspace?.areaType));
+    this.bookedAreaCapacity$ = this.store.select(selectCreateBooking).pipe(map(data => data.areaCapacity));
+    this.areaCapacity$ = this.store.select(selectCoworkingAreaCapacities)
   }
 
-  onChangeRoomSizes(size: number, isChecked: boolean) {
+  onChangeAreaCapacity(size: number, isChecked: boolean) {
     if (isChecked) {
-      this.bookingFormService.addRoomSize(size);
+      this.store.dispatch(addAreaCapacity({ areaCapacity: size }));
     } else {
-      this.bookingFormService.removeRoomSize(size);
+      this.store.dispatch(removeAreaCapacity({ areaCapacity: size }));
     }
+    this.store.dispatch(loadBookedDates());
   }
 }

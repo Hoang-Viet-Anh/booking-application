@@ -4,16 +4,8 @@ export interface Workspace {
     description: string;
     imageUrls?: string[];
     amenities: string[];
-    availability: Availability;
+    areaType: string;
+    areaTypeEmoji: string;
     maxBookingDays: number;
 }
 
-export interface Availability {
-    type: string;
-    rooms: Room[];
-}
-
-export interface Room {
-    roomsAmount: number;
-    capacity: number;
-}

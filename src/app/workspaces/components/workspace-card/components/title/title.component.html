@@ -4,5 +4,5 @@
         <p class="text-gray-500" *ngIf="description">{{ description }}</p>
     </div>
 
-    <ui-button label="Book Now" variant="primary" (onClick)="onBookNow()" class="md:max-w-[180px] min-w-[180px]" />
+    <ui-button [label]="buttonLabel" variant="primary" (onClick)="onBookNow()" class="md:max-w-[180px] min-w-[180px]" />
 </div>
